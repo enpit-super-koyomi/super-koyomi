@@ -20,7 +20,7 @@ export default function Home() {
         />
       </div>
       <button className="bg-gray-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-        <Link href="candidate">細川 の空き時間</Link>
+        <Link href="/adjust">予定を調整する</Link>
       </button>
     </div>
   );
