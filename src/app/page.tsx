@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -18,6 +19,9 @@ export default function Home() {
           alt="super暦ロゴ"
         />
       </div>
+      <button className="bg-gray-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+        <Link href="candidate">細川 の空き時間</Link>
+      </button>
     </div>
   );
 }
