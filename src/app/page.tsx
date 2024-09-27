@@ -13,9 +13,9 @@ export default function Home() {
     >
       <div style={{ textAlign: "center" }}>
         <Image
-          src="/SUPER_.png"
-          width={1417 / 2}
-          height={850 / 2}
+          src="/SUPER_koyo.svg"
+          width={1417 / 4}
+          height={850 / 4}
           alt="super暦ロゴ"
         />
       </div>
