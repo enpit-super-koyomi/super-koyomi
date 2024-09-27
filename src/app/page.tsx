@@ -21,7 +21,7 @@ export default function Home() {
       </div>
       <div
         className="text-center">
-        <div className="italic">候補の選択すらできない</div>
+        <div className="italic">候補日時の選択すら不要の</div>
         <div className="font-bold">One-click</div>
         <div className="text-xl">日程<del>強制</del>ツール</div>
         <div className="text-xl"><span className="opacity-0">日程</span>調整<span className="opacity-0">ツール</span></div>
