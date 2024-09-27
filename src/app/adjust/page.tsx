@@ -7,10 +7,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
 const people = [
-  { id: 1, name: "田中太郎" },
-  { id: 2, name: "佐藤花子" },
-  { id: 3, name: "鈴木一郎" },
-  { id: 4, name: "山田優子" },
+  { id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
+  { id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com"  },
+  { id: 3, name: "Licht", mail: "superkoyomi3@gmail.com"  },
+  { id: 4, name: "uxiun", mail: "superkoyomi4@gmail.com"  },
+  { id: 5, name: "なぐ", mail: "superkoyomi5@gmail.com"  },
+  { id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com"  }
 ]
 
 export default function SchedulePlanner() {
@@ -31,7 +33,11 @@ export default function SchedulePlanner() {
 
   const handleSchedule = () => {
     const date = generateRandomDate()
-    const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date}/${date}`
+    const selectedGuests = people
+      .filter(person => selectedPeople.includes(person.id))
+      .map(person => person.mail)
+      .join(",")
+    const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date}/${date}&add=${selectedGuests}`
     window.open(calendarUrl, '_blank')
   }
 
