@@ -82,7 +82,7 @@ export default function SchedulePlanner() {
           disabled={!isButtonActive}
           className="w-full"
         >
-          調整する
+          「{title || "-"}」の日時を決定する
         </Button>
       </div>
     </div>
