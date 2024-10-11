@@ -32,12 +32,14 @@ export default function SchedulePlanner() {
   }
 
   const handleSchedule = () => {
-    const date = generateRandomDate()
+    const date_s = "20241011T103000Z"
+    const date_f = "20241011T113000Z"
     const selectedGuests = people
       .filter(person => selectedPeople.includes(person.id))
       .map(person => person.mail)
       .join(",")
-    const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date}/${date}&add=${selectedGuests}`
+    const retry_URL = "https://app.superkoyomi.org"
+    const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${retry_URL}`
     window.open(calendarUrl, '_blank')
   }
 
