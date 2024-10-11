@@ -40,7 +40,7 @@ export default function SchedulePlanner() {
     const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date}/${date}&add=${selectedGuests}`
     window.open(calendarUrl, '_blank')
   }
-
+  
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-4">日程調整</h1>
