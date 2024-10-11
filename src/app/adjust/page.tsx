@@ -24,20 +24,24 @@ export default function SchedulePlanner() {
     setIsButtonActive(title.trim() !== "" && selectedPeople.length > 0)
   }, [title, selectedPeople])
 
+  /*
   const generateRandomDate = () => {
     const now = new Date()
     const oneWeekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
     const randomTime = new Date(now.getTime() + Math.random() * (oneWeekLater.getTime() - now.getTime()))
     return randomTime.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
   }
+  */
 
   const handleSchedule = () => {
-    const date = generateRandomDate()
+    const date_s = "20241011T103000Z"
+    const date_f = "20241011T113000Z"
     const selectedGuests = people
       .filter(person => selectedPeople.includes(person.id))
       .map(person => person.mail)
       .join(",")
-    const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date}/${date}&add=${selectedGuests}`
+    const retry_URL = `https://app.superkoyomi.org/retry/test_id?title=${encodeURIComponent(title)}&selectedGuest=${selectedGuests}`
+    const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${encodeURIComponent(retry_URL)}`
     window.open(calendarUrl, '_blank')
   }
   
