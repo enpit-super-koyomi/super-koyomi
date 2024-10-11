@@ -40,7 +40,7 @@ export default function SchedulePlanner() {
       .filter(person => selectedPeople.includes(person.id))
       .map(person => person.mail)
       .join(",")
-    const retry_URL = "https://app.superkoyomi.org"
+    const retry_URL = `https://app.superkoyomi.org/retry/test_id&title=${encodeURIComponent(title)}&selectedGuest=${selectedGuests}`
     const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${retry_URL}`
     window.open(calendarUrl, '_blank')
   }
