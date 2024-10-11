@@ -24,12 +24,14 @@ export default function SchedulePlanner() {
     setIsButtonActive(title.trim() !== "" && selectedPeople.length > 0)
   }, [title, selectedPeople])
 
+  /*
   const generateRandomDate = () => {
     const now = new Date()
     const oneWeekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
     const randomTime = new Date(now.getTime() + Math.random() * (oneWeekLater.getTime() - now.getTime()))
     return randomTime.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
   }
+  */
 
   const handleSchedule = () => {
     const date_s = "20241011T103000Z"
