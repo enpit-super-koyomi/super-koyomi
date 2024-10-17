@@ -19,6 +19,8 @@ docker compose up -d
 初回起動の場合は DB のセットアップが必要です。
 
 ```console
+npm install
+export DATABASE_URL=postgresql://admin:password@localhost:5432/superkoyomi
 npx prisma migrate dev
 ```
 
