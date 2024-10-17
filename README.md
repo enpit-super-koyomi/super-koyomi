@@ -24,6 +24,14 @@ export DATABASE_URL=postgresql://admin:password@localhost:5432/superkoyomi
 npx prisma migrate dev
 ```
 
+Windows の場合は以下のようにします。
+
+```console
+npm install
+$env:DATABASE_URL="postgresql://admin:password@localhost:5432/superkoyomi"
+npx prisma migrate dev
+```
+
 アプリケーションを起動します。
 
 ```console
