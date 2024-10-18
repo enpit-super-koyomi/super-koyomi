@@ -52,7 +52,7 @@ export default function SchedulePlanner() {
       const event = await calender.getEvents();
       const durations = event
         .map(e => ({ start: e.start, end: e.end}) )
-      const events = [durations]
+      // const events = [durations]
 
       // algo
       const freetimes: {start: Date, end: Date}[] = []
