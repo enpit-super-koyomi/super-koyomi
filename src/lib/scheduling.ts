@@ -1,6 +1,6 @@
 type Period = [start: Date, end: Date];
 
-function schedule(eventsOfUsers: Period[][]): Period {
+export function schedule(eventsOfUsers: Period[][]): Period {
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
 
   for (const events of eventsOfUsers) {
