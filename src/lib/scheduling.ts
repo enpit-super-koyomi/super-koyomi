@@ -1,6 +1,11 @@
-type Period = [start: Date, end: Date];
+export type Period = [start: Date, end: Date];
 
-export function schedule(eventsOfUsers: Period[][]): Period {
+export function schedule(
+  eventsOfUsers: Period[][],
+  durationSeconds: number
+): Period {
+  const DEMANDED_MILLISECOND = durationSeconds * 1e3;
+
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
 
   for (const events of eventsOfUsers) {
@@ -19,8 +24,14 @@ export function schedule(eventsOfUsers: Period[][]): Period {
   for (const change of freeBusyChanges) {
     if (busyCount === 0 && change.countDelta === 1) {
       freeDateEnd = change.timestamp;
-      if (freeDateEnd.getTime() - freeDateStart.getTime() >= 3600) {
-        return [freeDateStart, freeDateEnd];
+      if (
+        freeDateEnd.getTime() - freeDateStart.getTime() >=
+        DEMANDED_MILLISECOND
+      ) {
+        return [
+          freeDateStart,
+          new Date(freeDateStart.getTime() + DEMANDED_MILLISECOND),
+        ];
       }
     }
 
@@ -31,5 +42,8 @@ export function schedule(eventsOfUsers: Period[][]): Period {
     }
   }
 
-  return [freeDateStart, new Date(freeDateStart.getTime() + 3600)];
+  return [
+    freeDateStart,
+    new Date(freeDateStart.getTime() + DEMANDED_MILLISECOND),
+  ];
 }
