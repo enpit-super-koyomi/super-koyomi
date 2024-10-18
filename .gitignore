@@ -37,3 +37,5 @@ next-env.d.ts
 
 # preference
 /.vscode
+
+*Zone.Identifier
