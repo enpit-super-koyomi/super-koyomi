@@ -6,6 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
+import { getServerSession } from "next-auth";
+import { db } from "@/lib/prisma";
+import { authOptions } from '@/lib/auth'
+import { GoogleCalendar } from '@/lib/googleCalendar'
+
 const people = [
   { id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
   { id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com"  },
@@ -33,9 +38,38 @@ export default function SchedulePlanner() {
   }
   */
 
-  const handleSchedule = () => {
-    const date_s = "20241011T103000Z"
-    const date_f = "20241011T113000Z"
+  async function selectDuration ()  {
+    const session = await getServerSession(authOptions);
+
+    // const mails = selectedPeople.map(id => people.find(p => p.id === id))
+
+    if (session) {
+      const account = await db.findAccount(session?.user.id);
+      if (!account) return;
+      if (!account.access_token) return;
+
+      const calender = new GoogleCalendar(account.access_token);
+      const event = await calender.getEvents();
+      const durations = event
+        .map(e => ({ start: e.start, end: e.end}) )
+      const events = [durations]
+
+      // algo
+      const freetimes: {start: Date, end: Date}[] = []
+      const oktime = freetimes.find(time => {
+        const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)
+        return dif_hour >= 1
+      })
+
+      return oktime
+    }
+  }
+
+  async function handleSchedule () {
+    const duration = await selectDuration()
+    // const date_s = "20241011T103000Z"
+    const date_s = (duration?.start.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z') ?? "20241011T103000Z"
+    const date_f = (duration?.end.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z') ?? "20241011T113000Z"
     const selectedGuests = people
       .filter(person => selectedPeople.includes(person.id))
       .map(person => person.mail)
@@ -44,7 +78,7 @@ export default function SchedulePlanner() {
     const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${encodeURIComponent(retry_URL)}`
     window.open(calendarUrl, '_blank')
   }
-  
+
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-4">日程調整</h1>
