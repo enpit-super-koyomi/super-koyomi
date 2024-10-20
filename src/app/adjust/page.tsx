@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
-import { getServerSession } from "next-auth";
-import { db } from "@/lib/prisma";
-import { authOptions } from '@/lib/auth'
-import { GoogleCalendar } from '@/lib/googleCalendar'
+import { dateToGCalFormat } from '@/lib/utils'
+import { Period, schedule } from '@/lib/scheduling'
+import { getHostEvents } from '@/lib/getEvents'
+import { CalEvent } from '@/logic/calendar'
 
 const people = [
   { id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
@@ -38,38 +38,31 @@ export default function SchedulePlanner() {
   }
   */
 
-  async function selectDuration ()  {
-    const session = await getServerSession(authOptions);
-
+  async function findPeriod()  {
     // const mails = selectedPeople.map(id => people.find(p => p.id === id))
+    const hostEvents = await getHostEvents()
+    const guestsEvents: CalEvent[][] = []
+    const periodsByUser: Period[][] = [...guestsEvents, (hostEvents ?? [])]
+      .map(events =>
+        events.map(({start, end}) => ({ start, end }))
+      )
+    // algo
 
-    if (session) {
-      const account = await db.findAccount(session?.user.id);
-      if (!account) return;
-      if (!account.access_token) return;
+    const foundPeriod = schedule(periodsByUser)
 
-      const calender = new GoogleCalendar(account.access_token);
-      const event = await calender.getEvents();
-      const durations = event
-        .map(e => ({ start: e.start, end: e.end}) )
-      // const events = [durations]
+    // const oktime = freetimes.find(time => {
+    //   const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)
+    //   return dif_hour >= 1
+    // })
 
-      // algo
-      const freetimes: {start: Date, end: Date}[] = []
-      const oktime = freetimes.find(time => {
-        const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)
-        return dif_hour >= 1
-      })
-
-      return oktime
-    }
+    return foundPeriod
   }
 
   async function handleSchedule () {
-    const duration = await selectDuration()
+    const period = await findPeriod()
     // const date_s = "20241011T103000Z"
-    const date_s = (duration?.start.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z') ?? "20241011T103000Z"
-    const date_f = (duration?.end.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z') ?? "20241011T113000Z"
+    const date_s = dateToGCalFormat(period?.start ?? new Date())
+    const date_f = dateToGCalFormat(period?.end ?? new Date())
     const selectedGuests = people
       .filter(person => selectedPeople.includes(person.id))
       .map(person => person.mail)
