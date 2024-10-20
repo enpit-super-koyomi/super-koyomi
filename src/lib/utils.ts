@@ -13,3 +13,6 @@ export const generateRandomDate = () => {
 	)
 	return randomTime.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z"
 }
+
+export const dateToGCalFormat = (date: Date): string =>
+  date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';

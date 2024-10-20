@@ -11,7 +11,7 @@ export default async function Page() {
   const account = await db.findAccount(session.user.id);
   if (!account) return <h1>Account not found</h1>;
   if (!account.access_token) return <h1>Access token not found</h1>;
-
+  
   const calender = new GoogleCalendar(account.access_token);
   const event = await calender.getEvents();
 

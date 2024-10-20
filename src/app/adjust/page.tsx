@@ -6,6 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
+import { dateToGCalFormat } from '@/lib/utils'
+import { Period, schedule } from '@/lib/scheduling'
+import { getHostEvents } from '@/lib/getEvents'
+import { CalEvent } from '@/logic/calendar'
+
 const people = [
   { id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
   { id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com"  },
@@ -24,18 +29,29 @@ export default function SchedulePlanner() {
     setIsButtonActive(title.trim() !== "" && selectedPeople.length > 0)
   }, [title, selectedPeople])
 
-  /*
-  const generateRandomDate = () => {
-    const now = new Date()
-    const oneWeekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
-    const randomTime = new Date(now.getTime() + Math.random() * (oneWeekLater.getTime() - now.getTime()))
-    return randomTime.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
-  }
-  */
+  async function findPeriod()  {
+    // const mails = selectedPeople.map(id => people.find(p => p.id === id))
+    const hostEvents = await getHostEvents()
+    const guestsEvents: CalEvent[][] = []
+    const periodsByUser: Period[][] = [...guestsEvents, (hostEvents ?? [])]
+      .map(events =>
+        events.map(({start, end}) => ({ start, end }))
+      )
 
-  const handleSchedule = () => {
-    const date_s = "20241011T103000Z"
-    const date_f = "20241011T113000Z"
+    const foundPeriod = schedule(periodsByUser)
+
+    // const oktime = freetimes.find(time => {
+    //   const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)
+    //   return dif_hour >= 1
+    // })
+
+    return foundPeriod
+  }
+
+  async function handleSchedule () {
+    const period = await findPeriod()
+    const date_s = dateToGCalFormat(period?.start ?? new Date())
+    const date_f = dateToGCalFormat(period?.end ?? new Date())
     const selectedGuests = people
       .filter(person => selectedPeople.includes(person.id))
       .map(person => person.mail)
@@ -44,7 +60,7 @@ export default function SchedulePlanner() {
     const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${encodeURIComponent(retry_URL)}`
     window.open(calendarUrl, '_blank')
   }
-  
+
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-4">日程調整</h1>
