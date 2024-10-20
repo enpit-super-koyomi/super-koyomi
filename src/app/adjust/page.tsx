@@ -29,15 +29,6 @@ export default function SchedulePlanner() {
     setIsButtonActive(title.trim() !== "" && selectedPeople.length > 0)
   }, [title, selectedPeople])
 
-  /*
-  const generateRandomDate = () => {
-    const now = new Date()
-    const oneWeekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
-    const randomTime = new Date(now.getTime() + Math.random() * (oneWeekLater.getTime() - now.getTime()))
-    return randomTime.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
-  }
-  */
-
   async function findPeriod()  {
     // const mails = selectedPeople.map(id => people.find(p => p.id === id))
     const hostEvents = await getHostEvents()
@@ -46,7 +37,6 @@ export default function SchedulePlanner() {
       .map(events =>
         events.map(({start, end}) => ({ start, end }))
       )
-    // algo
 
     const foundPeriod = schedule(periodsByUser)
 
@@ -60,7 +50,6 @@ export default function SchedulePlanner() {
 
   async function handleSchedule () {
     const period = await findPeriod()
-    // const date_s = "20241011T103000Z"
     const date_s = dateToGCalFormat(period?.start ?? new Date())
     const date_f = dateToGCalFormat(period?.end ?? new Date())
     const selectedGuests = people
