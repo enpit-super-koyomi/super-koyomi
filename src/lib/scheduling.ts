@@ -27,7 +27,7 @@ export function schedule(eventsOfUsers: Period[][]): Period {
       if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration) {
         return {
           start: freeDateStart,
-          end: freeDateEnd
+          end: new Date(freeDateStart.getTime() + eventDuration),
         };
       }
     }
@@ -67,7 +67,7 @@ export function findFreeDurations(eventsOfUsers: Period[][]): Period[] {
       freeDateEnd = change.timestamp;
 
       if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration) {
-        candidate.push({start: freeDateStart, end: freeDateEnd});
+        candidate.push({start: freeDateStart, end: new Date(freeDateStart.getTime() + eventDuration)});
       }
     }
 
