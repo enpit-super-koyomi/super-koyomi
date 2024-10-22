@@ -7,7 +7,8 @@
     "build": "prisma generate && next build",
     "build:vercel": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:lib": "tsc src/lib/*.spec.ts  --outDir test/lib/ && node test/lib/*.spec.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.0",
