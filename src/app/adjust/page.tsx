@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 
 import { dateToGCalFormat } from '@/lib/utils'
 import { Period, schedule } from '@/lib/scheduling'
+
 import { getHostEvents } from '@/lib/getEvents'
 import { CalEvent } from '@/logic/calendar'
 import { db } from '@/lib/prisma'
@@ -21,9 +22,12 @@ import { db } from '@/lib/prisma'
 //   { id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com"  }
 // ]
 
+
 export default async function SchedulePlanner() {
   const [title, setTitle] = useState("")
+
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+
   const [isButtonActive, setIsButtonActive] = useState(false)
 
   const users = await db.allUsers()
@@ -32,23 +36,22 @@ export default async function SchedulePlanner() {
     setIsButtonActive(title.trim() !== "" && selectedUserIds.length > 0)
   }, [title, selectedUserIds])
 
-  async function findPeriod()  {
-    // const mails = selectedPeople.map(id => people.find(p => p.id === id))
-    const hostEvents = await getHostEvents()
-    const guestsEvents: CalEvent[][] = []
-    const periodsByUser: Period[][] = [...guestsEvents, (hostEvents ?? [])]
-      .map(events =>
-        events.map(({start, end}) => ({ start, end }))
-      )
+  async function findPeriod() {
+    // const userIds : string[]= [/* "some_id", "some_id" */];
+    const userIds = people.map((v) => v.id);
+    const hostEvents = await getHostEvents();
+    const guestsEvents = await getGuestsEvents(userIds);
+    const periodsByUser: Period[][] = [...guestsEvents, hostEvents ?? []];
+    console.log(periodsByUser);
 
-    const foundPeriod = schedule(periodsByUser)
+    const foundPeriod = schedule(periodsByUser);
 
     // const oktime = freetimes.find(time => {
     //   const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)
     //   return dif_hour >= 1
     // })
 
-    return foundPeriod
+    return foundPeriod;
   }
 
   async function handleSchedule () {
