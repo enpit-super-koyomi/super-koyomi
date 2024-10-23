@@ -1,4 +1,4 @@
-import { Account, PrismaClient } from "@prisma/client";
+import { Account, PrismaClient, User } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 export const prisma = globalForPrisma.prisma || new PrismaClient();
@@ -11,4 +11,9 @@ export const db = {
     });
     return account
   },
+
+  allUsers: async (): Promise<User[]>=>{
+    const users = await prisma.user.findMany();
+    return users
+  }
 };
