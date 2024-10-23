@@ -11,6 +11,11 @@ import { Period, schedule } from '@/lib/scheduling'
 import { getHostEvents } from '@/lib/getEvents'
 import { CalEvent } from '@/logic/calendar'
 
+import { Clock } from "lucide-react"
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import * as React from "react"
+
 const people = [
   { id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
   { id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com"  },
@@ -48,6 +53,11 @@ export default function SchedulePlanner() {
     return foundPeriod
   }
 
+  export default function Component() {
+    const [selectedDuration, setSelectedDuration] = React.useState<string>("0")
+    const [currentTime, setCurrentTime] = React.useState(new Date())
+  
+
   async function handleSchedule () {
     const period = await findPeriod()
     const date_s = dateToGCalFormat(period?.start ?? new Date())
@@ -60,6 +70,43 @@ export default function SchedulePlanner() {
     const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${encodeURIComponent(retry_URL)}`
     window.open(calendarUrl, '_blank')
   }
+
+  const formatDuration = (minutes: number) => {
+    if (minutes === 0) return "0分"
+    if (minutes < 60) return `${minutes}分`
+    const hours = Math.floor(minutes / 60)
+    const remainingMinutes = minutes % 60
+    if (remainingMinutes === 0) return `${hours}時間`
+    return `${hours}時間${remainingMinutes}分`
+  }
+
+  const generateDurationOptions = React.useCallback(() => {
+    const options = []
+    for (let minutes = 0; minutes <= 180; minutes += 30) {
+      options.push({
+        value: minutes.toString(),
+        label: formatDuration(minutes)
+      })
+    }
+    return options
+  }, [])
+
+  const durationOptions = React.useMemo(generateDurationOptions, [generateDurationOptions])
+
+  React.useEffect(() => {
+    // Update current time every minute
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 60000)
+
+    return () => clearInterval(intervalId)
+  }, [])
+
+  const getSelectedTime = (durationMinutes: number) => {
+    const selectedTime = new Date(currentTime.getTime() + durationMinutes * 60000)
+    return selectedTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })
+  }
+
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -97,6 +144,34 @@ export default function SchedulePlanner() {
             ))}
           </div>
         </div>
+
+      <Label htmlFor="duration-select">時間の長さを選択（30分間隔）</Label>
+      <Select value={selectedDuration} onValueChange={setSelectedDuration}>
+        <SelectTrigger id="duration-select" className="w-full">
+          <SelectValue placeholder="時間の長さを選択してください">
+            {selectedDuration && (
+              <span className="flex items-center">
+                <Clock className="mr-2 h-4 w-4" />
+                {formatDuration(parseInt(selectedDuration))}
+              </span>
+            )}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {durationOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {selectedDuration && (
+        <p className="text-sm text-muted-foreground">
+          選択された時間: {formatDuration(parseInt(selectedDuration))} 
+          （{getSelectedTime(parseInt(selectedDuration))}）
+        </p>
+      )}
+
         <Button
           onClick={handleSchedule}
           disabled={!isButtonActive}
@@ -107,4 +182,5 @@ export default function SchedulePlanner() {
       </div>
     </div>
   )
+}
 }
