@@ -4,6 +4,7 @@ export type Period = {
 };
 
 export function schedule(eventsOfUsers: Period[][]): Period {
+  const start = window.performance.now()
   const eventDuration = 1000 * 60 * 60
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
 
@@ -38,7 +39,8 @@ export function schedule(eventsOfUsers: Period[][]): Period {
       freeDateStart = change.timestamp;
     }
   }
-
+  const end = window.performance.now()
+  console.log(`schedule took ${end - start}ms`)
   return {
     start: freeDateStart,
     end: new Date(freeDateStart.getTime() + eventDuration)
@@ -46,6 +48,7 @@ export function schedule(eventsOfUsers: Period[][]): Period {
 }
 
 export function findFreeDurations(eventsOfUsers: Period[][]): Period[] {
+  const start = window.performance.now()
   const eventDuration = 1000 * 60 * 60
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
 
@@ -78,5 +81,7 @@ export function findFreeDurations(eventsOfUsers: Period[][]): Period[] {
     }
   }
 
+  const end = window.performance.now()
+  console.log(`findFreeDurations took ${end - start}ms`)
   return candidate
 }
