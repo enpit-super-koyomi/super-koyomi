@@ -10,24 +10,27 @@ import { dateToGCalFormat } from '@/lib/utils'
 import { Period, schedule } from '@/lib/scheduling'
 import { getHostEvents } from '@/lib/getEvents'
 import { CalEvent } from '@/logic/calendar'
+import { db } from '@/lib/prisma'
 
-const people = [
-  { id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
-  { id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com"  },
-  { id: 3, name: "Licht", mail: "superkoyomi3@gmail.com"  },
-  { id: 4, name: "uxiun", mail: "superkoyomi4@gmail.com"  },
-  { id: 5, name: "なぐ", mail: "superkoyomi5@gmail.com"  },
-  { id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com"  }
-]
+// const people = [
+//   { id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
+//   { id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com"  },
+//   { id: 3, name: "Licht", mail: "superkoyomi3@gmail.com"  },
+//   { id: 4, name: "uxiun", mail: "superkoyomi4@gmail.com"  },
+//   { id: 5, name: "なぐ", mail: "superkoyomi5@gmail.com"  },
+//   { id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com"  }
+// ]
 
-export default function SchedulePlanner() {
+export default async function SchedulePlanner() {
   const [title, setTitle] = useState("")
-  const [selectedPeople, setSelectedPeople] = useState<number[]>([])
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [isButtonActive, setIsButtonActive] = useState(false)
 
+  const users = await db.allUsers()
+
   useEffect(() => {
-    setIsButtonActive(title.trim() !== "" && selectedPeople.length > 0)
-  }, [title, selectedPeople])
+    setIsButtonActive(title.trim() !== "" && selectedUserIds.length > 0)
+  }, [title, selectedUserIds])
 
   async function findPeriod()  {
     // const mails = selectedPeople.map(id => people.find(p => p.id === id))
@@ -52,9 +55,9 @@ export default function SchedulePlanner() {
     const period = await findPeriod()
     const date_s = dateToGCalFormat(period?.start ?? new Date())
     const date_f = dateToGCalFormat(period?.end ?? new Date())
-    const selectedGuests = people
-      .filter(person => selectedPeople.includes(person.id))
-      .map(person => person.mail)
+    const selectedGuests = users
+      .filter(user => selectedUserIds.includes(user.id))
+      .map(user => user.email)
       .join(",")
     const retry_URL = `https://app.superkoyomi.org/retry/test_id?title=${encodeURIComponent(title)}&selectedGuest=${selectedGuests}`
     const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${encodeURIComponent(retry_URL)}`
@@ -77,21 +80,21 @@ export default function SchedulePlanner() {
         <div>
           <Label>招待する人</Label>
           <div className="mt-2 space-y-2">
-            {people.map((person) => (
-              <div key={person.id} className="flex items-center">
+            {users.map((user) => (
+              <div key={user.id} className="flex items-center">
                 <Checkbox
-                  id={`person-${person.id}`}
-                  checked={selectedPeople.includes(person.id)}
+                  id={`person-${user.id}`}
+                  checked={selectedUserIds.includes(user.id)}
                   onCheckedChange={(checked) => {
-                    setSelectedPeople(
+                    setSelectedUserIds(
                       checked
-                        ? [...selectedPeople, person.id]
-                        : selectedPeople.filter((id) => id !== person.id)
+                        ? [...selectedUserIds, user.id]
+                        : selectedUserIds.filter((id) => id !== user.id)
                     )
                   }}
                 />
-                <Label htmlFor={`person-${person.id}`} className="ml-2">
-                  {person.name}
+                <Label htmlFor={`person-${user.id}`} className="ml-2">
+                  {user.name}
                 </Label>
               </div>
             ))}
