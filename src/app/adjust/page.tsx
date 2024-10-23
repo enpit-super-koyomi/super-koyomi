@@ -8,44 +8,42 @@ import { Label } from "@/components/ui/label"
 
 import { dateToGCalFormat } from '@/lib/utils'
 import { Period, schedule } from '@/lib/scheduling'
-import { getHostEvents } from '@/lib/getEvents'
-import { CalEvent } from '@/logic/calendar'
+import { getGuestsEvents, getHostEvents } from '@/lib/getEvents'
 
 const people = [
-  { id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
-  { id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com"  },
-  { id: 3, name: "Licht", mail: "superkoyomi3@gmail.com"  },
-  { id: 4, name: "uxiun", mail: "superkoyomi4@gmail.com"  },
-  { id: 5, name: "なぐ", mail: "superkoyomi5@gmail.com"  },
-  { id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com"  }
-]
+  { id: "1", name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
+  { id: "2", name: "Sakana", mail: "superkoyomi2@gmail.com" },
+  { id: "3", name: "Licht", mail: "superkoyomi3@gmail.com" },
+  { id: "4", name: "uxiun", mail: "superkoyomi4@gmail.com" },
+  { id: "5", name: "なぐ", mail: "superkoyomi5@gmail.com" },
+  { id: "6", name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
+];
 
 export default function SchedulePlanner() {
   const [title, setTitle] = useState("")
-  const [selectedPeople, setSelectedPeople] = useState<number[]>([])
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([])
   const [isButtonActive, setIsButtonActive] = useState(false)
 
   useEffect(() => {
     setIsButtonActive(title.trim() !== "" && selectedPeople.length > 0)
   }, [title, selectedPeople])
 
-  async function findPeriod()  {
-    // const mails = selectedPeople.map(id => people.find(p => p.id === id))
-    const hostEvents = await getHostEvents()
-    const guestsEvents: CalEvent[][] = []
-    const periodsByUser: Period[][] = [...guestsEvents, (hostEvents ?? [])]
-      .map(events =>
-        events.map(({start, end}) => ({ start, end }))
-      )
+  async function findPeriod() {
+    // const userIds : string[]= [/* "some_id", "some_id" */];
+    const userIds = people.map((v) => v.id);
+    const hostEvents = await getHostEvents();
+    const guestsEvents = await getGuestsEvents(userIds);
+    const periodsByUser: Period[][] = [...guestsEvents, hostEvents ?? []];
+    console.log(periodsByUser);
 
-    const foundPeriod = schedule(periodsByUser)
+    const foundPeriod = schedule(periodsByUser);
 
     // const oktime = freetimes.find(time => {
     //   const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)
     //   return dif_hour >= 1
     // })
 
-    return foundPeriod
+    return foundPeriod;
   }
 
   async function handleSchedule () {

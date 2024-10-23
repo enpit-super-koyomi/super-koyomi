@@ -13,3 +13,13 @@ export async function getHostEvents() {
   const events = await calendar.getEvents()
   return events
 }
+
+export async function getGuestsEvents(ids: string[]) {
+  const promises = ids.map(async (id) => {
+    const account = await db.findAccount(id);
+    if (!account?.access_token) return [];
+    const calendar = new GoogleCalendar(account.access_token);
+    return await calendar.getEvents();
+  });
+  return Promise.all(promises);
+}
