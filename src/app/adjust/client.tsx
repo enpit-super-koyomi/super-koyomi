@@ -42,22 +42,30 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
   }
 
   async function handleSchedule() {
-    const period = await findPeriod();
-    const date_s = dateToGCalFormat(period?.start ?? new Date());
-    const date_f = dateToGCalFormat(period?.end ?? new Date());
-    const selectedGuests = users
-      .filter((user) => selectedUserIds.includes(user.id))
-      .map((user) => user.email)
-      .join(",");
-    const retry_URL = `https://app.superkoyomi.org/retry/test_id?title=${encodeURIComponent(
-      title
-    )}&selectedGuest=${selectedGuests}`;
-    const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-      title
-    )}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${encodeURIComponent(
-      retry_URL
-    )}`;
-    window.open(calendarUrl, "_blank");
+    setIsButtonActive(false);
+    try {
+      const period = await findPeriod();
+      const date_s = dateToGCalFormat(period?.start ?? new Date());
+      const date_f = dateToGCalFormat(period?.end ?? new Date());
+      const selectedGuests = users
+        .filter((user) => selectedUserIds.includes(user.id))
+        .map((user) => user.email)
+        .join(",");
+      const retry_URL = `https://app.superkoyomi.org/retry/test_id?title=${encodeURIComponent(
+        title
+      )}&selectedGuest=${selectedGuests}`;
+      const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+        title
+      )}&dates=${date_s}/${date_f}&add=${selectedGuests}&details=${encodeURIComponent(
+        retry_URL
+      )}`;
+      window.open(calendarUrl, "_blank");
+    } catch (e) {
+      window.alert("Sorry, an error has occurred!");
+      console.error(e);
+    } finally {
+      setIsButtonActive(true);
+    }
   }
 
   return (
