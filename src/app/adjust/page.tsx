@@ -5,15 +5,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+// import "./styles.css";
 
 import { dateToGCalFormat } from '@/lib/utils'
 import { Period, schedule } from '@/lib/scheduling'
 import { getHostEvents } from '@/lib/getEvents'
 import { CalEvent } from '@/logic/calendar'
 
-import { Clock } from "lucide-react"
-
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import * as React from "react"
 
 const people = [
@@ -29,6 +35,7 @@ export default function SchedulePlanner() {
   const [title, setTitle] = useState("")
   const [selectedPeople, setSelectedPeople] = useState<number[]>([])
   const [isButtonActive, setIsButtonActive] = useState(false)
+  const [selectedDuration, setSelectedDuration] = useState<number>(60)
 
   useEffect(() => {
     setIsButtonActive(title.trim() !== "" && selectedPeople.length > 0)
@@ -43,7 +50,7 @@ export default function SchedulePlanner() {
         events.map(({start, end}) => ({ start, end }))
       )
 
-    const foundPeriod = schedule(periodsByUser)
+    const foundPeriod = schedule(selectedDuration, periodsByUser)
 
     // const oktime = freetimes.find(time => {
     //   const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)
@@ -52,11 +59,6 @@ export default function SchedulePlanner() {
 
     return foundPeriod
   }
-
-  export default function Component() {
-    const [selectedDuration, setSelectedDuration] = React.useState<string>("0")
-    const [currentTime, setCurrentTime] = React.useState(new Date())
-  
 
   async function handleSchedule () {
     const period = await findPeriod()
@@ -71,42 +73,14 @@ export default function SchedulePlanner() {
     window.open(calendarUrl, '_blank')
   }
 
-  const formatDuration = (minutes: number) => {
-    if (minutes === 0) return "0分"
-    if (minutes < 60) return `${minutes}分`
-    const hours = Math.floor(minutes / 60)
-    const remainingMinutes = minutes % 60
-    if (remainingMinutes === 0) return `${hours}時間`
-    return `${hours}時間${remainingMinutes}分`
-  }
-
-  const generateDurationOptions = React.useCallback(() => {
-    const options = []
-    for (let minutes = 0; minutes <= 180; minutes += 30) {
-      options.push({
-        value: minutes.toString(),
-        label: formatDuration(minutes)
-      })
-    }
-    return options
-  }, [])
-
-  const durationOptions = React.useMemo(generateDurationOptions, [generateDurationOptions])
-
-  React.useEffect(() => {
-    // Update current time every minute
-    const intervalId = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 60000)
-
-    return () => clearInterval(intervalId)
-  }, [])
-
-  const getSelectedTime = (durationMinutes: number) => {
-    const selectedTime = new Date(currentTime.getTime() + durationMinutes * 60000)
-    return selectedTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })
-  }
-
+  // const formatDuration = (minutes: number) => {
+  //   if (minutes === 0) return "0分"
+  //   if (minutes < 60) return `${minutes}分`
+  //   const hours = Math.floor(minutes / 60)
+  //   const remainingMinutes = minutes % 60
+  //   if (remainingMinutes === 0) return `${hours}時間`
+  //   return `${hours}時間${remainingMinutes}分`
+  // }
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -120,6 +94,10 @@ export default function SchedulePlanner() {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="予定のタイトルを入力"
           />
+        </div>
+        <div>
+          <Label htmlFor="duration-select">時間の長さを選択（30分間隔）</Label>
+          <SelectDuration defaultValue={60} dispatch={setSelectedDuration} />
         </div>
         <div>
           <Label>招待する人</Label>
@@ -145,32 +123,12 @@ export default function SchedulePlanner() {
           </div>
         </div>
 
-      <Label htmlFor="duration-select">時間の長さを選択（30分間隔）</Label>
-      <Select value={selectedDuration} onValueChange={setSelectedDuration}>
-        <SelectTrigger id="duration-select" className="w-full">
-          <SelectValue placeholder="時間の長さを選択してください">
-            {selectedDuration && (
-              <span className="flex items-center">
-                <Clock className="mr-2 h-4 w-4" />
-                {formatDuration(parseInt(selectedDuration))}
-              </span>
-            )}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {durationOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {selectedDuration && (
+      {/* {selectedDuration && (
         <p className="text-sm text-muted-foreground">
-          選択された時間: {formatDuration(parseInt(selectedDuration))} 
+          選択された時間: {formatDuration(parseInt(selectedDuration))}
           （{getSelectedTime(parseInt(selectedDuration))}）
         </p>
-      )}
+      )} */}
 
         <Button
           onClick={handleSchedule}
@@ -183,4 +141,40 @@ export default function SchedulePlanner() {
     </div>
   )
 }
+
+function SelectDuration({
+  defaultValue,
+  dispatch
+}: {
+  defaultValue: number,
+  dispatch: React.Dispatch<React.SetStateAction<number>>
+}) {
+    const onChange = (value: string) => {
+      const n = parseInt(value)
+      dispatch(n)
+    }
+
+    return(
+      <Select
+        defaultValue={defaultValue.toString()}
+        onValueChange={onChange}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select a duration" />
+        </SelectTrigger>
+        <SelectContent>
+          {[
+            30,
+            60,
+            90,
+            120,
+            150,
+            180,
+          ].map(duration => {
+            const label = duration.toString()
+            return <SelectItem value={label} key={label}>{label}</SelectItem>
+          }) }
+        </SelectContent>
+      </Select>
+    )
 }
