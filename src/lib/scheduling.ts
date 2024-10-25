@@ -3,8 +3,8 @@ export type Period = {
   end: Date
 };
 
-export function schedule(eventsOfUsers: Period[][]): Period {
-  const eventDuration = 1000 * 60 * 60
+export function schedule(eventDurationMinute: number, eventsOfUsers: Period[][]): Period {
+  const eventDuration = 1000 * 60 * eventDurationMinute
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
 
   for (const events of eventsOfUsers) {
@@ -45,8 +45,8 @@ export function schedule(eventsOfUsers: Period[][]): Period {
   };
 }
 
-export function findFreeDurations(eventsOfUsers: Period[][]): Period[] {
-  const eventDuration = 1000 * 60 * 60
+export function findFreePeriods(eventDurationMinute: number, eventsOfUsers: Period[][]): Period[] {
+  const eventDuration = 1000 * 60 * eventDurationMinute
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
 
   for (const events of eventsOfUsers) {
