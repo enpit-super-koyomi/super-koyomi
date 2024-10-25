@@ -19,14 +19,14 @@ import { getGuestsEvents, getHostEvents } from "@/lib/getEvents"
 
 import { User } from "@prisma/client"
 
-const people = [
-	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
-	{ id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com" },
-	{ id: 3, name: "Licht", mail: "superkoyomi3@gmail.com" },
-	{ id: 4, name: "uxiun", mail: "superkoyomi4@gmail.com" },
-	{ id: 5, name: "なぐ", mail: "superkoyomi5@gmail.com" },
-	{ id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
-]
+// const people = [
+// 	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
+// 	{ id: 2, name: "Sakana", mail: "superkoyomi2@gmail.com" },
+// 	{ id: 3, name: "Licht", mail: "superkoyomi3@gmail.com" },
+// 	{ id: 4, name: "uxiun", mail: "superkoyomi4@gmail.com" },
+// 	{ id: 5, name: "なぐ", mail: "superkoyomi5@gmail.com" },
+// 	{ id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
+// ]
 
 export default function SchedulePlanner({ users }: { users: User[] }) {
 	const [title, setTitle] = useState("")
