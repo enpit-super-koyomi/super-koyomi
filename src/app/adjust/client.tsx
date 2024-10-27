@@ -39,10 +39,8 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 	}, [title, selectedUserIds])
 
 	async function findPeriod() {
-		// const userIds : string[]= [/* "some_id", "some_id" */];
-		const userIds = users.map(v => v.id)
 		const hostEvents = await getHostEvents()
-		const guestsEvents = await getGuestsEvents(userIds)
+		const guestsEvents = await getGuestsEvents(selectedUserIds);
 		const periodsByUser: Period[][] = [...guestsEvents, hostEvents ?? []]
 		console.log(periodsByUser)
 
