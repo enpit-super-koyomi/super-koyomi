@@ -155,14 +155,17 @@ function SelectDuration({
 				<SelectValue placeholder="Select a duration" />
 			</SelectTrigger>
 			<SelectContent>
-				{[30, 60, 90, 120, 150, 180].map(duration => {
-					const label = duration.toString()
-					return (
-						<SelectItem value={label} key={label}>
-							{formatDuration(duration)}
-						</SelectItem>
-					)
-				})}
+				{Array.from(Array(60 / 30 * 6).keys()) // 60m/h / 30m (step) * 6h (max duration)
+					.map(i => {
+						const duration = (i + 1) * 30
+						const label = duration.toString()
+						return (
+							<SelectItem value={label} key={label}>
+								{formatDuration(duration)}
+							</SelectItem>
+						)
+					})
+				}
 			</SelectContent>
 		</Select>
 	)
