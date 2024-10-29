@@ -86,6 +86,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 				<div>
 					<Label htmlFor="title">予定のタイトル</Label>
 					<Input
+						autoFocus
 						id="title"
 						value={title}
 						onChange={e => setTitle(e.target.value)}
