@@ -35,8 +35,8 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 	const [isButtonActive, setIsButtonActive] = useState(false)
 
 	useEffect(() => {
-		setIsButtonActive(title.trim() !== "" && selectedUserIds.length > 0)
-	}, [title, selectedUserIds])
+		setIsButtonActive(title.trim() !== "")
+	}, [title])
 
 	async function findPeriod() {
 		const hostEvents = await getHostEvents()
