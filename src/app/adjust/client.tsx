@@ -35,8 +35,8 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 	const [isButtonActive, setIsButtonActive] = useState(false)
 
 	useEffect(() => {
-		setIsButtonActive(title.trim() !== "" && selectedUserIds.length > 0)
-	}, [title, selectedUserIds])
+		setIsButtonActive(title.trim() !== "")
+	}, [title])
 
 	async function findPeriod() {
 		const hostEvents = await getHostEvents()
@@ -86,6 +86,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 				<div>
 					<Label htmlFor="title">予定のタイトル</Label>
 					<Input
+						autoFocus
 						id="title"
 						value={title}
 						onChange={e => setTitle(e.target.value)}
@@ -154,14 +155,17 @@ function SelectDuration({
 				<SelectValue placeholder="Select a duration" />
 			</SelectTrigger>
 			<SelectContent>
-				{[30, 60, 90, 120, 150, 180].map(duration => {
-					const label = duration.toString()
-					return (
-						<SelectItem value={label} key={label}>
-							{formatDuration(duration)}
-						</SelectItem>
-					)
-				})}
+				{Array.from(Array(60 / 30 * 6).keys()) // 60m/h / 30m (step) * 6h (max duration)
+					.map(i => {
+						const duration = (i + 1) * 30
+						const label = duration.toString()
+						return (
+							<SelectItem value={label} key={label}>
+								{formatDuration(duration)}
+							</SelectItem>
+						)
+					})
+				}
 			</SelectContent>
 		</Select>
 	)
