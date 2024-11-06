@@ -3,6 +3,11 @@ export type Period = {
   end: Date
 };
 
+export type ExcludePeriod = {
+	start: number,
+	end: number
+}
+
 export function schedule(eventDurationMinute: number, eventsOfUsers: Period[][]): Period {
   const eventDuration = 1000 * 60 * eventDurationMinute
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
