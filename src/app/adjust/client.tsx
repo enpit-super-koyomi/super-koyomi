@@ -14,8 +14,7 @@ import {
 } from "@/components/ui/select"
 
 import { dateToGCalFormat } from "@/lib/utils"
-import { Period, schedule } from "@/lib/scheduling"
-import { getGuestsEvents, getHostEvents } from "@/lib/getEvents"
+import { schedule } from "@/lib/scheduling"
 
 import { User } from "@prisma/client"
 
@@ -39,12 +38,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 	}, [title])
 
 	async function findPeriod() {
-		const hostEvents = await getHostEvents()
-		const guestsEvents = await getGuestsEvents(selectedUserIds);
-		const periodsByUser: Period[][] = [...guestsEvents, hostEvents ?? []]
-		console.log(periodsByUser)
-
-		const foundPeriod = schedule(selectedDurationMinute, periodsByUser)
+		const foundPeriod = await schedule(selectedDurationMinute, selectedUserIds);
 
 		// const oktime = freetimes.find(time => {
 		//   const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)

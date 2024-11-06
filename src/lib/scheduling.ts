@@ -1,9 +1,15 @@
+"use server"
+
+import { getGuestsEvents, getHostEvents } from "@/lib/getEvents";
+
 export type Period = {
   start: Date,
   end: Date
 };
 
-export function schedule(eventDurationMinute: number, eventsOfUsers: Period[][]): Period {
+async function findPeriod(eventDurationMinute: number, eventsOfUsers: Period[][]): Promise<Period> {
+  console.debug("This is findPeriod() running in server")
+
   const eventDuration = 1000 * 60 * eventDurationMinute
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
 
@@ -45,7 +51,7 @@ export function schedule(eventDurationMinute: number, eventsOfUsers: Period[][])
   };
 }
 
-export function findFreePeriods(eventDurationMinute: number, eventsOfUsers: Period[][]): Period[] {
+export async function findFreePeriods(eventDurationMinute: number, eventsOfUsers: Period[][]): Promise<Period[]> {
   const eventDuration = 1000 * 60 * eventDurationMinute
   const freeBusyChanges: Array<{ timestamp: Date; countDelta: 1 | -1 }> = [];
 
@@ -79,4 +85,12 @@ export function findFreePeriods(eventDurationMinute: number, eventsOfUsers: Peri
   }
 
   return candidate
+}
+
+export async function schedule(duration: number, userIds: string[]) {
+  const hostEvents = await getHostEvents();
+  const guestsEvents = await getGuestsEvents(userIds);
+  const periodsByUser: Period[][] = [...guestsEvents, hostEvents ?? []];
+  console.log(periodsByUser);
+  return findPeriod(duration, periodsByUser);
 }
