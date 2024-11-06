@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { ExcludePeriod, Period } from "./scheduling"
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
@@ -16,3 +17,16 @@ export const generateRandomDate = () => {
 
 export const dateToGCalFormat = (date: Date): string =>
   date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+export const truncateTime = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+export const excludePeriodOfOffsetDays = (excludePeriod: ExcludePeriod, offsetDays?: number, baseDate?: Date): Period => {
+	const endOffsetDaysAdd = excludePeriod.start <= excludePeriod.end ? 0 : 1
+	const start = baseDate == undefined ? new Date() : truncateTime(baseDate)
+	const end = baseDate == undefined ? new Date() : truncateTime(baseDate)
+	start.setHours(excludePeriod.start)
+	end.setHours(excludePeriod.end)
+	start.setDate(start.getDate() + (offsetDays??0))
+	end.setDate(end.getDate() + (offsetDays??0) + endOffsetDaysAdd)
+	return { start, end }
+}

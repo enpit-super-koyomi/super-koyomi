@@ -7,6 +7,11 @@ export type Period = {
   end: Date
 };
 
+export type ExcludePeriod = {
+	start: number,
+	end: number
+}
+
 async function findPeriod(eventDurationMinute: number, eventsOfUsers: Period[][]): Promise<Period> {
   console.debug("This is findPeriod() running in server")
 
@@ -30,7 +35,7 @@ async function findPeriod(eventDurationMinute: number, eventsOfUsers: Period[][]
     if (busyCount === 0 && change.countDelta === 1) {
       freeDateEnd = change.timestamp;
 
-      if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration) {
+      if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration && new Date() <= freeDateStart) {
         return {
           start: freeDateStart,
           end: new Date(freeDateStart.getTime() + eventDuration),
@@ -72,7 +77,7 @@ export async function findFreePeriods(eventDurationMinute: number, eventsOfUsers
     if (busyCount === 0 && change.countDelta === 1) {
       freeDateEnd = change.timestamp;
 
-      if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration) {
+      if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration && new Date() <= freeDateStart) {
         candidate.push({start: freeDateStart, end: new Date(freeDateStart.getTime() + eventDuration)});
       }
     }

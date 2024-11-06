@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select"
 
 import { dateToGCalFormat } from "@/lib/utils"
-import { schedule } from "@/lib/scheduling"
+import { ExcludePeriod, schedule } from "@/lib/scheduling"
 
 import { User } from "@prisma/client"
 
@@ -31,27 +31,17 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 	const [title, setTitle] = useState("")
 	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
 	const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
+	const [excludePeriod, setExcludePeriod] = useState<ExcludePeriod>({ start: 22, end: 8 })
 	const [isButtonActive, setIsButtonActive] = useState(false)
 
 	useEffect(() => {
 		setIsButtonActive(title.trim() !== "")
 	}, [title])
 
-	async function findPeriod() {
-		const foundPeriod = await schedule(selectedDurationMinute, selectedUserIds);
-
-		// const oktime = freetimes.find(time => {
-		//   const dif_hour = (time.end.getTime() - time.start.getTime()) / (60*60*1000)
-		//   return dif_hour >= 1
-		// })
-
-		return foundPeriod
-	}
-
 	async function handleSchedule() {
 		setIsButtonActive(false)
 		try {
-			const period = await findPeriod()
+			const period = await schedule(selectedDurationMinute, selectedUserIds, excludePeriod)
 			const date_s = dateToGCalFormat(period?.start ?? new Date())
 			const date_f = dateToGCalFormat(period?.end ?? new Date())
 			const selectedGuests = users
@@ -88,8 +78,12 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 					/>
 				</div>
 				<div>
-					<Label htmlFor="duration-select">時間の長さを選択（30分間隔）</Label>
+					<Label htmlFor="duration-select">予定の長さ（30分間隔）</Label>
 					<SelectDuration defaultValue={60} dispatch={setSelectedDurationMinute} />
+				</div>
+				<div>
+					<Label htmlFor="exclusion-select">除外時間帯</Label>
+					<Exclusion dispatch={setExcludePeriod} defaultValue={excludePeriod} />
 				</div>
 				<div>
 					<Label>招待する人</Label>
@@ -149,7 +143,7 @@ function SelectDuration({
 				<SelectValue placeholder="Select a duration" />
 			</SelectTrigger>
 			<SelectContent>
-				{Array.from(Array(60 / 30 * 6).keys()) // 60m/h / 30m (step) * 6h (max duration)
+				{Array.from(Array((60 / 30) * 6).keys()) // 60m/h / 30m (step) * 6h (max duration)
 					.map(i => {
 						const duration = (i + 1) * 30
 						const label = duration.toString()
@@ -158,9 +152,69 @@ function SelectDuration({
 								{formatDuration(duration)}
 							</SelectItem>
 						)
-					})
-				}
+					})}
 			</SelectContent>
 		</Select>
+	)
+}
+
+function Exclusion({
+	defaultValue,
+	dispatch,
+}: {
+	defaultValue: ExcludePeriod
+	dispatch: React.Dispatch<React.SetStateAction<ExcludePeriod>>
+}) {
+	const onChange = (start: string, end: string) => {
+		const n_start = parseInt(start)
+		const n_end = parseInt(end)
+		dispatch({ start: n_start, end: n_end })
+	}
+
+	return (
+		<div className="flex items-center">
+			<div>
+				<Label>開始時刻</Label>
+				<Select
+					defaultValue={defaultValue.start.toString()}
+					onValueChange={start => onChange(start, defaultValue.end.toString())}>
+					<SelectTrigger>
+						<SelectValue placeholder="Select a exclude start" />
+					</SelectTrigger>
+					<SelectContent>
+						{Array.from(Array(24).keys()) //24時間から選択
+							.map(i => {
+								const label = i.toString()
+								return (
+									<SelectItem value={label} key={label}>
+										{i}時
+									</SelectItem>
+								)
+							})}
+					</SelectContent>
+				</Select>
+			</div>
+			<div>
+				<Label>終了時刻</Label>
+				<Select
+					defaultValue={defaultValue.end.toString()}
+					onValueChange={end => onChange(defaultValue.start.toString(), end)}>
+					<SelectTrigger>
+						<SelectValue placeholder="Select a exclude end" />
+					</SelectTrigger>
+					<SelectContent>
+						{Array.from(Array(24).keys()) //24時間から選択
+							.map(i => {
+								const label = i.toString()
+								return (
+									<SelectItem value={label} key={label}>
+										{i}時
+									</SelectItem>
+								)
+							})}
+					</SelectContent>
+				</Select>
+			</div>
+		</div>
 	)
 }
