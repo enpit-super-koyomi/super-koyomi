@@ -29,7 +29,7 @@ export function schedule(eventDurationMinute: number, eventsOfUsers: Period[][])
     if (busyCount === 0 && change.countDelta === 1) {
       freeDateEnd = change.timestamp;
 
-      if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration) {
+      if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration && new Date() <= freeDateStart) {
         return {
           start: freeDateStart,
           end: new Date(freeDateStart.getTime() + eventDuration),
@@ -71,7 +71,7 @@ export function findFreePeriods(eventDurationMinute: number, eventsOfUsers: Peri
     if (busyCount === 0 && change.countDelta === 1) {
       freeDateEnd = change.timestamp;
 
-      if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration) {
+      if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration && new Date() <= freeDateStart) {
         candidate.push({start: freeDateStart, end: new Date(freeDateStart.getTime() + eventDuration)});
       }
     }
