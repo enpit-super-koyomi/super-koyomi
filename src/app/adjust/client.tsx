@@ -18,6 +18,7 @@ import { Period, schedule } from "@/lib/scheduling"
 import { getGuestsEvents, getHostEvents } from "@/lib/getEvents"
 
 import { User } from "@prisma/client"
+import { formatDuration } from "date-fns"
 
 // const people = [
 // 	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
@@ -155,7 +156,7 @@ function SelectDuration({
 				<SelectValue placeholder="Select a duration" />
 			</SelectTrigger>
 			<SelectContent>
-				{Array.from(Array(60 / 30 * 6).keys()) // 60m/h / 30m (step) * 6h (max duration)
+				{Array.from(Array(260 / 30 * 6).keys()) // 60m/h / 30m (step) * 6h (max duration)
 					.map(i => {
 						const duration = (i + 1) * 30
 						const label = duration.toString()
@@ -168,5 +169,65 @@ function SelectDuration({
 				}
 			</SelectContent>
 		</Select>
+	)
+}
+
+type ExcludePeriod = {
+	start: number,
+	end: number
+}
+
+function Exclusion({
+	defaultValue,
+	dispatch,
+}: {
+	defaultValue: ExcludePeriod
+	dispatch: React.Dispatch<React.SetStateAction<ExcludePeriod>>
+}) {
+	const onChange = (start: string, end: string) => {
+		const n_start = parseInt(start)
+		const n_end = parseInt(end)
+		dispatch({start: n_start, end:n_end})
+	}
+
+
+	return (
+		<>
+			<Select defaultValue={defaultValue.start.toString()} onValueChange={start=>onChange(start, defaultValue.end.toString())}>
+				<SelectTrigger>
+					<SelectValue placeholder="Select a exclude start" />
+				</SelectTrigger>
+				<SelectContent>
+					{Array.from(Array(24).keys()) //24時間から選択
+						.map(i => {
+							const label = i.toString()
+							return (
+								<SelectItem value={label} key={label}>
+									{i}時
+								</SelectItem>
+							)
+						})
+					}
+				</SelectContent>
+			</Select>
+
+			<Select defaultValue={defaultValue.end.toString()} onValueChange={end=>onChange(defaultValue.start.toString(), end)}>
+				<SelectTrigger>
+					<SelectValue placeholder="Select a exclude end" />
+				</SelectTrigger>
+				<SelectContent>
+					{Array.from(Array(24).keys()) //24時間から選択
+						.map(i => {
+							const label = i.toString()
+							return (
+								<SelectItem value={label} key={label}>
+									{i}時
+								</SelectItem>
+							)
+						})
+					}
+				</SelectContent>
+			</Select>
+		</>
 	)
 }
