@@ -1,6 +1,7 @@
 "use server"
 
 import { getGuestsEvents, getHostEvents } from "@/lib/getEvents";
+import { excludePeriodOfOffsetDays } from "./utils";
 
 export type Period = {
   start: Date,
@@ -92,10 +93,13 @@ export async function findFreePeriods(eventDurationMinute: number, eventsOfUsers
   return candidate
 }
 
-export async function schedule(duration: number, userIds: string[]) {
+export async function schedule(duration: number, userIds: string[], excludePeriod: ExcludePeriod) {
   const hostEvents = await getHostEvents();
   const guestsEvents = await getGuestsEvents(userIds);
-  const periodsByUser: Period[][] = [...guestsEvents, hostEvents ?? []];
+  const now = new Date()
+  const excludePeriods: Period[] = Array.from(Array(8).keys())
+    .map(offsetDays => excludePeriodOfOffsetDays(excludePeriod, offsetDays, now))
+  const periodsByUser: Period[][] = [...guestsEvents, hostEvents ?? [], excludePeriods]
   console.log(periodsByUser);
   return findPeriod(duration, periodsByUser);
 }
