@@ -33,6 +33,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 	const [title, setTitle] = useState("")
 	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
 	const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
+	const [excludePeriod, setExcludePeriod] = useState<ExcludePeriod>({ start: 22, end: 8})
 	const [isButtonActive, setIsButtonActive] = useState(false)
 
 	useEffect(() => {
@@ -97,6 +98,10 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 				<div>
 					<Label htmlFor="duration-select">時間の長さを選択（30分間隔）</Label>
 					<SelectDuration defaultValue={60} dispatch={setSelectedDurationMinute} />
+				</div>
+				<div>
+					<Label htmlFor="exclusion-select">除外時間を選択</Label>
+					<Exclusion dispatch={setExcludePeriod} defaultValue={excludePeriod} />
 				</div>
 				<div>
 					<Label>招待する人</Label>
