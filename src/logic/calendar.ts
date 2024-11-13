@@ -1,5 +1,6 @@
 export interface Calendar {
   getEvents(): Promise<CalEvent[]>;
+  addEvent(event: CalEvent): Promise<CalEvent>;
 }
 
 export type CalEvent = {
@@ -10,6 +11,11 @@ export type CalEvent = {
   start: Date;
   end: Date;
   status: EventStatus | null;
+  attendees: Attendee[];
+};
+
+export type Attendee = {
+  email: string | null;
 };
 
 export type EventStatus = "CONFIRMED" | "TENTATIVE" | "CANCELLED";
