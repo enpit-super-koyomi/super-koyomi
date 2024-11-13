@@ -30,6 +30,8 @@ export class GoogleCalendar implements Calendar {
       calendarId: primaryCalendarId!,
       timeMin: new Date().toISOString(),
       timeMax: new Date(Date.now() + FETCH_EVENTS_DURATION).toISOString(),
+      singleEvents: true,      
+      orderBy: "startTime",
     });
 
     return (
