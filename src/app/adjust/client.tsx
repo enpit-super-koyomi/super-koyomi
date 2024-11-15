@@ -177,47 +177,50 @@ function Exclusion({
 
   return (
     <div className="flex items-center">
-      <div>
-        <Label>開始時刻</Label>
-        <Select
-          defaultValue={defaultValue.start.toString()}
-					onValueChange={start => onChange(start, defaultValue.end.toString())}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a exclude start" />
-          </SelectTrigger>
-          <SelectContent>
-            {Array.from(Array(24).keys()) //24時間から選択
-							.map(i => {
-								const label = i.toString()
-                return (
-                  <SelectItem value={label} key={label}>
-                    {i}時
-                  </SelectItem>
-								)
-              })}
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Label>終了時刻</Label>
-        <Select
-          defaultValue={defaultValue.end.toString()}
-					onValueChange={end => onChange(defaultValue.start.toString(), end)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a exclude end" />
-          </SelectTrigger>
-          <SelectContent>
-            {Array.from(Array(24).keys()) //24時間から選択
-							.map(i => {
-								const label = i.toString()
-                return (
-                  <SelectItem value={label} key={label}>
-                    {i}時
-                  </SelectItem>
-								)
-              })}
-          </SelectContent>
-        </Select>
+      <div className="flex row items-center">
+        {/* <Label>開始時刻</Label> */}
+        <div className="w-20">
+          <Select
+            defaultValue={defaultValue.start.toString()}
+            onValueChange={start => onChange(start, defaultValue.end.toString())}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a exclude start" />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from(Array(24).keys()) //24時間から選択
+                .map(i => {
+                  const label = i.toString()
+                  return (
+                    <SelectItem value={label} key={label}>
+                      {i}時
+                    </SelectItem>
+                  )
+                })}
+            </SelectContent>
+          </Select>
+        </div>
+        {/* <Label>終了時刻</Label> */}
+        <span className="px-2">～</span>
+        <div className="w-20">
+          <Select
+            defaultValue={defaultValue.end.toString()}
+            onValueChange={end => onChange(defaultValue.start.toString(), end)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a exclude end" />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from(Array(24).keys()) //24時間から選択
+                .map(i => {
+                  const label = i.toString()
+                  return (
+                    <SelectItem value={label} key={label}>
+                      {i}時
+                    </SelectItem>
+                  )
+                })}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
 	)
