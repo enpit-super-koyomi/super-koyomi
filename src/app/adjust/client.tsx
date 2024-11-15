@@ -12,6 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { ExcludePeriod, schedule } from "@/lib/scheduling"
 
@@ -58,7 +60,14 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
         attendees: users.filter(user => selectedUserIds.includes(user.id)),
       });
 
-      // TODO: 追加したあと完了画面に繊維したり、追加した予定の日時を表示したり。
+      toast(
+        `カレンダーに追加されました。\n${period.start.toLocaleString()}から${selectedDurationMinute}分`,
+        {
+          onClick: () => {
+            open("https://calendar.google.com/calendar", "_blank");
+          },
+        }
+      );
     } catch (e) {
 			window.alert("Sorry, an error has occurred!")
 			console.error(e)
@@ -116,6 +125,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
           「{title || "-"}」の日時を決定する
         </Button>
       </div>
+      <ToastContainer />
     </div>
 	)
 }
