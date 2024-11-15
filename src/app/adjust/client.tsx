@@ -62,7 +62,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
       });
 
       toast(
-        `カレンダーに追加されました。\n${period.start.toLocaleString()}から${formatDuration(selectedDurationMinute)}分`,
+        `カレンダーに追加されました。\n${period.start.toLocaleString()}から${formatDuration(selectedDurationMinute)}`,
         {
           onClick: () => {
             open("https://calendar.google.com/calendar", "_blank");
