@@ -19,6 +19,7 @@ import { ExcludePeriod, schedule } from "@/lib/scheduling"
 
 import { User } from "@prisma/client"
 import { addEvent } from "@/lib/addEvent";
+import { formatDuration } from "@/lib/utils";
 
 // const people = [
 // 	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
@@ -61,7 +62,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
       });
 
       toast(
-        `カレンダーに追加されました。\n${period.start.toLocaleString()}から${selectedDurationMinute}分`,
+        `カレンダーに追加されました。\n${period.start.toLocaleString()}から${formatDuration(selectedDurationMinute)}分`,
         {
           onClick: () => {
             open("https://calendar.google.com/calendar", "_blank");
@@ -140,15 +141,6 @@ function SelectDuration({
   const onChange = (value: string) => {
 		const n = parseInt(value)
 		dispatch(n)
-	}
-
-  const formatDuration = (minutes: number) => {
-		if (minutes === 0) return "0分"
-		if (minutes < 60) return `${minutes}分`
-		const hours = Math.floor(minutes / 60)
-		const remainingMinutes = minutes % 60
-		if (remainingMinutes === 0) return `${hours}時間`
-		return `${hours}時間${remainingMinutes}分`
 	}
 
   return (
