@@ -29,11 +29,14 @@ export const excludePeriodOfOffsetDays = (
 	const endOffsetDaysAdd = excludePeriod.start <= excludePeriod.end ? 0 : 1
 	const start = baseDate == undefined ? new Date() : truncateTime(baseDate)
 	const end = baseDate == undefined ? new Date() : truncateTime(baseDate)
-	start.setHours(excludePeriod.start)
-	end.setHours(excludePeriod.end)
-	start.setDate(start.getDate() + (offsetDays ?? 0))
-	end.setDate(end.getDate() + (offsetDays ?? 0) + endOffsetDaysAdd)
-	return { start, end }
+	start.setUTCHours(excludePeriod.start)
+	end.setUTCHours(excludePeriod.end)
+	start.setUTCDate(start.getUTCDate() + (offsetDays ?? 0))
+	end.setUTCDate(end.getUTCDate() + (offsetDays ?? 0) + endOffsetDaysAdd)
+	return {
+		start: shiftDateByTimezoneOffsetJST(start),
+		end: shiftDateByTimezoneOffsetJST(end)
+	}
 }
 
 export const formatDuration = (minutes: number) => {
@@ -44,3 +47,11 @@ export const formatDuration = (minutes: number) => {
 	if (remainingMinutes === 0) return `${hours}時間`
 	return `${hours}時間${remainingMinutes}分`
 }
+
+export const shiftDateByTimezoneOffset = (offsetMinutes?: number) => (date: Date): Date => {
+	const offset = offsetMinutes ?? date.getTimezoneOffset()
+	date.setUTCMinutes(date.getUTCMinutes() + offset)
+	return date
+}
+
+export const shiftDateByTimezoneOffsetJST = shiftDateByTimezoneOffset(-540);
