@@ -106,3 +106,18 @@ export async function schedule(duration: number, userIds: string[], excludePerio
   }))))
   return findPeriod(duration, periodsByUser);
 }
+
+export async function periodsOfUsers(userIds: string[], excludePeriod: ExcludePeriod) {
+  const hostEvents = await getHostEvents();
+  const guestsEvents = await getGuestsEvents(userIds);
+  const now = new Date()
+  const excludePeriods: Period[] = Array.from(Array(8).keys())
+    .map(offsetDays => excludePeriodOfOffsetDays(excludePeriod, offsetDays, now))
+  const periodsOfUsers: Period[][] = [...guestsEvents, hostEvents ?? [], excludePeriods]
+  console.log(periodsOfUsers.map(periods => periods.map(period => ({
+    start: period.start.toLocaleString(),
+    end: period.end.toLocaleString()
+  }))))
+
+  return periodsOfUsers
+}

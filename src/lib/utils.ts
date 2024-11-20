@@ -39,6 +39,14 @@ export const excludePeriodOfOffsetDays = (
 	}
 }
 
+export const shiftDateByTimezoneOffset = (offsetMinutes?: number) => (date: Date): Date => {
+	const offset = offsetMinutes ?? date.getTimezoneOffset()
+	date.setUTCMinutes(date.getUTCMinutes() + offset)
+	return date
+}
+
+export const shiftDateByTimezoneOffsetJST = shiftDateByTimezoneOffset(-540);
+
 export const formatDuration = (minutes: number) => {
 	if (minutes === 0) return "0分"
 	if (minutes < 60) return `${minutes}分`
@@ -48,10 +56,17 @@ export const formatDuration = (minutes: number) => {
 	return `${hours}時間${remainingMinutes}分`
 }
 
-export const shiftDateByTimezoneOffset = (offsetMinutes?: number) => (date: Date): Date => {
-	const offset = offsetMinutes ?? date.getTimezoneOffset()
-	date.setUTCMinutes(date.getUTCMinutes() + offset)
-	return date
-}
+export const formatDate = (date: Date): string => {
+	// Convert to a user-friendly string
+	const formattedDate = date.toLocaleString('ja-JP', {
+    year: 'numeric',
+    month: 'long', // 'short' for abbreviated month names
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    // second: '2-digit',
+    // timeZoneName: 'short' // Shows the time zone
+	});
 
-export const shiftDateByTimezoneOffsetJST = shiftDateByTimezoneOffset(-540);
+	return formattedDate
+}
