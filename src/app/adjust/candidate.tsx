@@ -1,11 +1,8 @@
 import { Button } from "@/components/ui/button"
-import { addEvent } from "@/lib/addEvent"
 import { ExcludePeriod, Period, findFreePeriods, periodsOfUsers } from "@/lib/scheduling"
 import { formatDate } from "@/lib/utils"
 import { User } from "@prisma/client"
-import { ChevronRight } from "lucide-react"
 import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
 
 type Props = {
 	title: string
@@ -41,7 +38,7 @@ export default function Candidate(props: Props) {
 	}
 
   async function handlePeriodClick(period: Period) {
-
+    setSelectedPeriod(period)
   }
 
 	return (
