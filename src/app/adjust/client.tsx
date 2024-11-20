@@ -20,6 +20,7 @@ import { ExcludePeriod, schedule } from "@/lib/scheduling"
 import { User } from "@prisma/client"
 import { addEvent } from "@/lib/addEvent";
 import { formatDuration } from "@/lib/utils";
+import Candidate from "./candidate";
 
 // const people = [
 // 	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
@@ -126,6 +127,13 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
           「{title || "-"}」の日時を決定する
         </Button>
       </div>
+      <Candidate
+        excludePeriod={excludePeriod}
+        selectedDurationMinute={selectedDurationMinute}
+        selectedUserIds={selectedUserIds}
+        title={title}
+        users={users}
+      />
       <ToastContainer />
     </div>
 	)
