@@ -7,6 +7,7 @@ import { formatDate, formatDuration } from "@/lib/utils"
 import { User } from "@prisma/client"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { WeekView } from "./WeekView"
 
 type Props = {
 	title: string
@@ -88,6 +89,13 @@ export default function Candidate(props: Props) {
 				「{props.title || "-"}」の日時候補を探す
 			</Button>
 			<ul className="py-4 space-y-2">
+				<WeekView
+					currentDate={new Date()}
+					handlePeriodClick={handlePeriodClick}
+					periods={freePeriods}
+					isButtonActive={isButtonActive}
+				/>
+
 				{freePeriods.map(period => (
 					<li key={period.start.toString()}>
 						<Button

@@ -1,3 +1,4 @@
+import { Period } from '@/lib/scheduling';
 import { CalendarEvent } from './types';
 
 export function getWeekDates(date: Date): Date[] {
@@ -15,9 +16,9 @@ export function formatTime(date: Date): string {
   return date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
 }
 
-export function getEventPosition(event: CalendarEvent): { top: number; height: number } {
-  const start = event.start.getHours() * 60 + event.start.getMinutes();
-  const end = event.end.getHours() * 60 + event.end.getMinutes();
+export function getEventPosition(period: Period): { top: number; height: number } {
+  const start = period.start.getHours() * 60 + period.start.getMinutes();
+  const end = period.end.getHours() * 60 + period.end.getMinutes();
   const top = (start / 1440) * 100;
   const height = ((end - start) / 1440) * 100;
   return { top, height };

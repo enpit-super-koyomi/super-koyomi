@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { WeekView } from './WeekView';
+import { WeekView } from '../WeekView';
 import { EditableCalendarEvent } from './types';
 
 const initialEvents: EditableCalendarEvent[] = [
@@ -30,7 +30,7 @@ export default function Page() {
   const [events, setEvents] = useState<EditableCalendarEvent[]>(initialEvents);
 
   const handleEditEvent = (editedEvent: EditableCalendarEvent) => {
-    setEvents(events.map(event => 
+    setEvents(events.map(event =>
       event.id === editedEvent.id ? { ...editedEvent, onEdit: handleEditEvent, onDelete: handleDeleteEvent } : event
     ));
   };
@@ -48,7 +48,7 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <h1 className="text-2xl font-bold mb-4">週間カレンダー</h1>
-      <WeekView 
+      <WeekView
         events={eventsWithHandlers}
         currentDate={new Date('2023-05-15')}
       />
