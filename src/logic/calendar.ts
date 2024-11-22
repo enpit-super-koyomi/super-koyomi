@@ -14,6 +14,17 @@ export type CalEvent = {
   attendees: Attendee[];
 };
 
+export type SlimedCalEvent = {
+  id?: string | null;
+  summary?: string;
+  description?: string | null;
+  location?: string | null;
+  start: Date;
+  end: Date;
+  status?: EventStatus | null;
+  attendees?: Attendee[];
+};
+
 export type Attendee = {
   email: string | null;
 };
