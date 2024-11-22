@@ -5,7 +5,7 @@ import { addEvent } from "@/lib/addEvent"
 import { ExcludePeriod, Period, findFreePeriods, periodsOfUsers } from "@/lib/scheduling"
 import { formatDate, formatDuration } from "@/lib/utils"
 import { User } from "@prisma/client"
-import { Dispatch, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 
 type Props = {
@@ -44,6 +44,7 @@ export default function Candidate(props: Props) {
 
 	async function handlePeriodClick(period: Period) {
 		setIsButtonActive(false)
+		setSelectedPeriod(period)
 		try {
 			// const end = new Date(period.start)
 			// end.setMinutes(end.get props.selectedDurationMinute)
@@ -107,23 +108,3 @@ export default function Candidate(props: Props) {
 		</div>
 	)
 }
-
-// const TimeSlot = ({
-// 	setIsButtonActive
-// }: {
-// 	setIsButtonActive: React.Dispatch<React.SetStateAction<boolean>>
-// }) => {
-// 	return (
-// 		<Button
-// 							variant={selectedPeriod?.start === period.start ? "secondary" : "ghost"}
-// 							className="w-full justify-between font-normal"
-// 							onClick={() => handlePeriodClick(period)}>
-// 							<span className="flex items-center mr-2 h-4 w-4">
-//                 <span>{formatDate(period.start)}</span>
-//                 <span className="px-2">～</span>
-//                 <span>{formatDate(period.end)}</span>
-//               </span>
-// 							{/* <ChevronRight className="h-4 w-4" /> */}
-// 						</Button>
-// 	)
-// }
