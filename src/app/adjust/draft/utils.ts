@@ -1,5 +1,4 @@
 import { Period } from '@/lib/scheduling';
-import { CalendarEvent } from './types';
 
 export function getWeekDates(date: Date): Date[] {
   const week = [];

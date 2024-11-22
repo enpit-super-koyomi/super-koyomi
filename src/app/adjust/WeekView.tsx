@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { EditableCalendarEvent } from './draft/types';
-import { getWeekDates, formatTime, getEventPosition } from './draft/utils';
+import React from 'react';
+import { formatTime, getEventPosition } from './draft/utils';
 import { Period } from '@/lib/scheduling';
 
 interface WeekViewProps {
@@ -11,7 +10,6 @@ interface WeekViewProps {
 }
 
 export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActive }: WeekViewProps) {
-  const [selectedEvent, setSelectedEvent] = useState<EditableCalendarEvent | null>(null);
   const weekDates = Array.from(Array(7).keys()).map(i => {
     const date = new Date(currentDate)
     date.setDate(currentDate.getDate() + i)
