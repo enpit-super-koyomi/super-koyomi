@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import { formatTime, getEventPosition } from './draft/utils';
+import { formatTime, getEventPosition } from '../../lib/draft/utils';
 import { Period } from '@/lib/scheduling';
 
 interface WeekViewProps {
