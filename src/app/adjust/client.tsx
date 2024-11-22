@@ -19,7 +19,7 @@ import { ExcludePeriod, schedule } from "@/lib/scheduling"
 
 import { User } from "@prisma/client"
 import { addEvent } from "@/lib/addEvent";
-import { formatDuration } from "@/lib/utils";
+import { formatDate, formatDuration } from "@/lib/utils";
 import Candidate from "./candidate";
 
 // const people = [
@@ -61,9 +61,9 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
         status: "CONFIRMED",
         attendees: users.filter(user => selectedUserIds.includes(user.id)),
       });
-
+      
       toast(
-        `カレンダーに追加されました。\n${period.start.toLocaleString()}から${formatDuration(selectedDurationMinute)}`,
+        `カレンダーに追加されました。\n${formatDate(period.start)} から${formatDuration(selectedDurationMinute)}`,
         {
           onClick: () => {
             open("https://calendar.google.com/calendar", "_blank");
