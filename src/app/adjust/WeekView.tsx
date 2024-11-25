@@ -23,7 +23,7 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
     <div className="max-w-full overflow-x-auto">
       <div className="min-w-[800px]">
         <div className="grid grid-cols-8 gap-px bg-gray-200">
-          <div className="sticky left-0 bg-white z-10"></div>
+          <div className="sticky left-0 bg-white "></div>
           {weekDates.map((date) => (
             <div key={date.toISOString()} className="text-center py-2 font-semibold bg-white">
               {date.toLocaleDateString('ja-JP', { weekday: 'short', month: 'numeric', day: 'numeric' })}
@@ -31,7 +31,7 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
           ))}
         </div>
         <div className="relative grid grid-cols-8 gap-px bg-gray-200" style={{ height: '1440px' }}>
-          <div className="sticky left-0 bg-white z-10">
+          <div className="sticky left-0 bg-white ">
             {hours.map((hour) => (
               <div key={hour} className="h-[60px] border-t border-gray-200 text-xs text-gray-500 text-right pr-2">
                 {`${hour}:00`}

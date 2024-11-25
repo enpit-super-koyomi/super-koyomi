@@ -61,7 +61,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
         status: "CONFIRMED",
         attendees: users.filter(user => selectedUserIds.includes(user.id)),
       });
-      
+
       toast(
         `カレンダーに追加されました。\n${formatDate(period.start)} から${formatDuration(selectedDurationMinute)}`,
         {
@@ -79,7 +79,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-4">日程調整</h1>
       <div className="space-y-4">
         <div>
