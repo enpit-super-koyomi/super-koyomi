@@ -3,6 +3,7 @@ import {
   CalEvent,
   DEFAULT_EVENT,
   EventStatus,
+  SlimedCalEvent,
 } from "@/logic/calendar";
 import { google, calendar_v3 } from "googleapis";
 
@@ -55,6 +56,42 @@ export class GoogleCalendar implements Calendar {
           event.attendees?.map((it) => ({ email: it.email ?? null })) ?? [],
       })) ?? []
     );
+  }
+
+  async getBusyPeriods(): Promise<SlimedCalEvent[]> {
+    const { data: calendars } = await this.client.calendarList.list();
+    const primaryCalendarId = calendars.items?.find(
+      (calendar) => calendar.primary
+    )?.id;
+    if (!primaryCalendarId) {
+      throw new Error("Primary calendar not found");
+    }
+
+    const freebusyResult = await this.client.freebusy.query({
+      requestBody: {
+        items: [{ id: primaryCalendarId }],
+        groupExpansionMax: 100,
+        calendarExpansionMax: 50,
+        timeMin: new Date().toISOString(),
+        timeMax: new Date(Date.now() + FETCH_EVENTS_DURATION).toISOString(),
+      },
+    });
+
+    console.log("freebusy: result:", JSON.stringify(freebusyResult.data));
+
+    if (freebusyResult.data.calendars == null) return [];
+
+    const busyPeriods: SlimedCalEvent[] = [];
+    const freeBusyCalendars = Object.values(freebusyResult.data.calendars);
+    for (const { busy } of freeBusyCalendars) {
+      if (!busy) continue;
+      for (const { start, end } of busy) {
+        if (start && end)
+          busyPeriods.push({ start: new Date(start), end: new Date(end) });
+      }
+    }
+    console.log("freebusy: busy is", JSON.stringify(busyPeriods));
+    return busyPeriods;
   }
 
   async addEvent(event: CalEvent): Promise<CalEvent> {

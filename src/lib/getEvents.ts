@@ -10,7 +10,7 @@ export async function getHostEvents() {
   const account = await db.findAccount(session.user.id)
   if (!account?.access_token) return
   const calendar = new GoogleCalendar(account.access_token)
-  const events = await calendar.getEvents()
+  const events = await calendar.getBusyPeriods();
   return events
 }
 
@@ -19,7 +19,7 @@ export async function getGuestsEvents(ids: string[]) {
     const account = await db.findAccount(id);
     if (!account?.access_token) return [];
     const calendar = new GoogleCalendar(account.access_token);
-    return await calendar.getEvents();
+    return await calendar.getBusyPeriods();
   });
   return Promise.all(promises);
 }
