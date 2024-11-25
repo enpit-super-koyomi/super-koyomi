@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { UserWeiget } from "@/components/UserWidget";
+import { UserWidget } from "@/components/UserWidget";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -34,10 +34,14 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header className="w-full flex justify-between items-center p-3 fixed top-0">
+        <header className="w-full flex justify-between items-center p-3 fixed top-0 bg-white z-10">
           <p>スーパーこよみ</p>
-          <UserWeiget signin={Boolean(session?.user)} name={session?.user?.name ?? undefined} picture={session?.user?.image ?? undefined}  />
+          <UserWidget signin={Boolean(session?.user)} name={session?.user?.name ?? undefined} picture={session?.user?.image ?? undefined}  />
         </header>
+
+        <div className="relative h-8">
+        </div>
+
         {children}
       </body>
     </html>

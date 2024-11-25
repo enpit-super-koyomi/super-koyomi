@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const DEFAULT_IMAGE = "/images/default.png";
 
-export const UserWeiget = ({
+export const UserWidget = ({
   signin,
   name,
   picture,

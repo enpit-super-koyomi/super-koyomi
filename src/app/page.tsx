@@ -6,7 +6,7 @@ export default function Home() {
     <div
       style={{
         width: "100%",
-        height: "100dvh",
+        height: "95dvh",
         display: "grid",
         placeItems: "center",
       }}
