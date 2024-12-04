@@ -123,11 +123,10 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
             ))}
           </div>
         </div>
-        {
-				//<Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
-        //  「{title || "-"}」の日時を決定する
-        //</Button>
-}
+        
+				<Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
+          「{title || "-"}」の日時を決定する
+        </Button>
       </div>
       <Candidate
         excludePeriod={excludePeriod}
