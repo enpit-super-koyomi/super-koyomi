@@ -21,11 +21,13 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
 
   return (
     <div className="max-w-full overflow-x-auto">
-      <div className="min-w-[800px]">
+      {
+      //<div className="min-w-[800px]"> //横幅
+}
         <div className="grid grid-cols-8 gap-px bg-gray-200">
           <div className="sticky left-0 bg-white "></div>
           {weekDates.map((date) => (
-            <div key={date.toISOString()} className="text-center py-2 font-semibold bg-white">
+            <div key={date.toISOString()} className="text-center text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 font-semibold bg-white">
               {date.toLocaleDateString('ja-JP', { weekday: 'short', month: 'numeric', day: 'numeric' })}
             </div>
           ))}
@@ -53,20 +55,22 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
                         top: `${top}%`,
                         height: `${height}%`,
                         minHeight: '20px',
-                        backgroundColor: `blue`,
-                        borderColor: "blue",
-                        color: "white",
+                        backgroundColor: `#f0be5c`,//lightsteelblue#b0c4de
+                        borderColor: "#f0be5c",//lightsteelblue
+                        color: "black",
                       }}
                       onClick={() => handlePeriodClick(period)}
                     >
-                      <div>{formatTime(period.start)} - {formatTime(period.end)}</div>
+                      <div>{formatTime(period.start)}  {formatTime(period.end)}</div>
                     </button>
                   );
                 })}
             </div>
           ))}
         </div>
-      </div>
+      {
+      //</div>
+}
     </div>
   );
 }
