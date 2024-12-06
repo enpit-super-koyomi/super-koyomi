@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -36,14 +36,14 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
 	const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
 	const [excludePeriod, setExcludePeriod] = useState<ExcludePeriod>({ start: 22, end: 8 })
-	const [isButtonActive, setIsButtonActive] = useState(false)
+	// const [isButtonActive, setIsButtonActive] = useState(false)
 
   useEffect(() => {
-		setIsButtonActive(title.trim() !== "")
+		// setIsButtonActive(title.trim() !== "")
 	}, [title])
 
   async function handleSchedule() {
-		setIsButtonActive(false)
+		// setIsButtonActive(false)
     try {
       const period = await schedule(
         selectedDurationMinute,
@@ -74,7 +74,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 			window.alert("Sorry, an error has occurred!")
 			console.error(e)
     } finally {
-			setIsButtonActive(true)
+			// setIsButtonActive(true)
     }
   }
 
@@ -124,9 +124,9 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
           </div>
         </div>
         
-				<Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
+				{/* <Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
           「{title || "-"}」の日時を決定する
-        </Button>
+        </Button> */}
       </div>
       <Candidate
         excludePeriod={excludePeriod}
