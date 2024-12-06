@@ -12,14 +12,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ToastContainer, toast } from "react-toastify";
+// import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { ExcludePeriod, schedule } from "@/lib/scheduling"
+// import { ExcludePeriod, schedule } from "@/lib/scheduling"
+import { ExcludePeriod} from "@/lib/scheduling"
 
 import { User } from "@prisma/client"
-import { addEvent } from "@/lib/addEvent";
-import { formatDate, formatDuration } from "@/lib/utils";
+// import { addEvent } from "@/lib/addEvent";
+// import { formatDate, formatDuration } from "@/lib/utils";
+import {formatDuration } from "@/lib/utils";
 import Candidate from "./candidate";
 
 // const people = [
@@ -42,41 +45,41 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 		// setIsButtonActive(title.trim() !== "")
 	}, [title])
 
-  async function handleSchedule() {
-		// setIsButtonActive(false)
-    try {
-      const period = await schedule(
-        selectedDurationMinute,
-        selectedUserIds,
-        excludePeriod
-      );
+  // async function handleSchedule() {
+	// 	setIsButtonActive(false)
+  //   try {
+  //     const period = await schedule(
+  //       selectedDurationMinute,
+  //       selectedUserIds,
+  //       excludePeriod
+  //     );
 
-      await addEvent({
-        id: null,
-        summary: title,
-        start: period?.start,
-        end: period?.end,
-        description: null,
-        location: null,
-        status: "CONFIRMED",
-        attendees: users.filter(user => selectedUserIds.includes(user.id)),
-      });
+  //     await addEvent({
+  //       id: null,
+  //       summary: title,
+  //       start: period?.start,
+  //       end: period?.end,
+  //       description: null,
+  //       location: null,
+  //       status: "CONFIRMED",
+  //       attendees: users.filter(user => selectedUserIds.includes(user.id)),
+  //     });
 
-      toast(
-        `カレンダーに追加されました。\n${formatDate(period.start)} から${formatDuration(selectedDurationMinute)}`,
-        {
-          onClick: () => {
-            open("https://calendar.google.com/calendar", "_blank");
-          },
-        }
-      );
-    } catch (e) {
-			window.alert("Sorry, an error has occurred!")
-			console.error(e)
-    } finally {
-			// setIsButtonActive(true)
-    }
-  }
+  //     toast(
+  //       `カレンダーに追加されました。\n${formatDate(period.start)} から${formatDuration(selectedDurationMinute)}`,
+  //       {
+  //         onClick: () => {
+  //           open("https://calendar.google.com/calendar", "_blank");
+  //         },
+  //       }
+  //     );
+  //   } catch (e) {
+	// 		window.alert("Sorry, an error has occurred!")
+	// 		console.error(e)
+  //   } finally {
+	// 		setIsButtonActive(true)
+  //   }
+  // }
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
