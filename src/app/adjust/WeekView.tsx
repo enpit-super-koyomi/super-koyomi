@@ -5,9 +5,9 @@ import { formatTime, getEventPosition } from '../../lib/draft/utils';
 import { Period } from '@/lib/scheduling';
 
 interface WeekViewProps {
-  periods: Period[];
-  currentDate: Date;
-  handlePeriodClick: (period: Period) => Promise<void>
+  periods: Period[]; //空き時間の長さ
+  currentDate: Date; //今日の日付
+  handlePeriodClick: (period: Period) => Promise<void> //予定候補ボタンがクリックされたらカレンダーに予定を追加
   isButtonActive: boolean
 }
 
@@ -34,20 +34,20 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
         </div>
         <div className="relative grid grid-cols-8 gap-px bg-gray-200" style={{ height: '1440px' }}>
           <div className="sticky left-0 bg-white ">
-            {hours.map((hour) => (
+            {hours.map((hour) => (//左側の、1時間ごとの区切りの表示？
               <div key={hour} className="h-[60px] border-t border-gray-200 text-xs text-gray-500 text-right pr-2">
                 {`${hour}:00`}
               </div>
             ))}
           </div>
-          {weekDates.map((date) => (
+          {weekDates.map((date) => ( //曜日の表示？
             <div key={date.toISOString()} className="relative bg-white">
               {periods
-                .filter((period) => period.start.toDateString() === date.toDateString())
-                .map((period) => {
-                  const { top, height } = getEventPosition(period);
+                .filter((period) => period.start.toDateString() === date.toDateString()) //予定の開始時刻と"date"が同じperiodをフィルターする
+                .map((period) => {//配列の各要素に対して処理
+                  const { top, height } = getEventPosition(period); //periodを元に、ボタンの上辺と高さを決定
                   return (
-                    <button
+                    <button //予定候補をボタンとしている
                       key={period.start.toString()}
                       disabled={!isButtonActive}
                       className={`absolute w-full px-1 py-1 text-xs border rounded overflow-hidden transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
@@ -55,11 +55,11 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
                         top: `${top}%`,
                         height: `${height}%`,
                         minHeight: '20px',
-                        backgroundColor: `#f0be5c`,//lightsteelblue#b0c4de
-                        borderColor: "#f0be5c",//lightsteelblue
-                        color: "black",
+                        backgroundColor: `#f0be5c`,//薄い黄色　縁の中の色
+                        borderColor: "#f0be5c",//薄い黄色　縁の色
+                        color: "black", //文字色
                       }}
-                      onClick={() => handlePeriodClick(period)}
+                      onClick={() => handlePeriodClick(period)} //空き時間をクリックしたら予定を追加
                     >
                       <div>{formatTime(period.start)}  {formatTime(period.end)}</div>
                     </button>

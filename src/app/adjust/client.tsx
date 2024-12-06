@@ -42,7 +42,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 		setIsButtonActive(title.trim() !== "")
 	}, [title])
 
-  async function handleSchedule() {
+  async function handleSchedule() { //予定を登録する関数
 		setIsButtonActive(false)
     try {
       const period = await schedule(

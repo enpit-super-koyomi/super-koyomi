@@ -15,7 +15,7 @@ export function formatTime(date: Date): string {
   return date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
 }
 
-export function getEventPosition(period: Period): { top: number; height: number } {
+export function getEventPosition(period: Period): { top: number; height: number } { //予定候補表示のボタン位置決定に使用
   const start = period.start.getHours() * 60 + period.start.getMinutes();
   const end = period.end.getHours() * 60 + period.end.getMinutes();
   const top = (start / 1440) * 100;

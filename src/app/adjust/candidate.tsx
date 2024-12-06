@@ -26,7 +26,7 @@ export default function Candidate(props: Props) {
 		setIsButtonActive(props.title.trim() !== "")
 	}, [props.title])
 
-	async function handleSchedule() {
+	async function handleSchedule() { //予定を扱う関数
 		setIsButtonActive(false)
 		try {
 			const periods = await periodsOfUsers(props.selectedUserIds, props.excludePeriod)
@@ -44,17 +44,17 @@ export default function Candidate(props: Props) {
 	}
 
 	async function handlePeriodClick(period: Period) {
-		setIsButtonActive(false)
-		setSelectedPeriod(period)
-		try {
+		setIsButtonActive(false) //デフォルトはnonアクティブ
+		setSelectedPeriod(period) //periodをセット
+		try { //try -catchで例外処理
 			// const end = new Date(period.start)
 			// end.setMinutes(end.get props.selectedDurationMinute)
-			const period_spanned: Period = {
+			const period_spanned: Period = { //予定の長さを指定
 				start: period.start,
 				end: new Date(period.start.getTime() + 1000 * 60 * props.selectedDurationMinute),
 			}
 
-			await addEvent({
+			await addEvent({ //googleカレンダーに予定を追加
 				id: null,
 				summary: props.title,
 				start: period_spanned?.start,
@@ -65,7 +65,7 @@ export default function Candidate(props: Props) {
 				attendees: props.users.filter(user => props.selectedUserIds.includes(user.id)),
 			})
 
-			toast(
+			toast( //ポップアップ通知
 				`カレンダーに追加されました。\n${formatDate(period.start)} から${formatDuration(
 					props.selectedDurationMinute
 				)}`,
@@ -75,7 +75,7 @@ export default function Candidate(props: Props) {
 					},
 				}
 			)
-		} catch (e) {
+		} catch (e) { //例外処理のエラーメッセージ
 			window.alert("Sorry, an error has occurred!")
 			console.error(e)
 		} finally {
@@ -85,7 +85,7 @@ export default function Candidate(props: Props) {
 
 	return (
 		<div className="py-4">
-			<Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
+			<Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full"> 
 				「{props.title || "-"}」の日時候補を探す
 			</Button>
 			<ul className="py-4 space-y-2">
