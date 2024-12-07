@@ -8,6 +8,7 @@ import { User } from "@prisma/client"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
+import { ConfirmationDialog } from "@/components/ui/dialog.jsx"
 
 type Props = {
 	title: string
@@ -21,6 +22,10 @@ export default function Candidate(props: Props) {
 	const [isButtonActive, setIsButtonActive] = useState(false)
 	const [freePeriods, setFreePeriods] = useState<Period[]>([])
 	const [selectedPeriod, setSelectedPeriod] = useState<Period | null>(null)
+
+	const [isDialogVisible, setIsDialogVisible] = useState(false);
+    const showDialog = () => setIsDialogVisible(true);
+    const hideDialog = () => setIsDialogVisible(false);
 
 	useEffect(() => {
 		setIsButtonActive(props.title.trim() !== "")
@@ -46,13 +51,19 @@ export default function Candidate(props: Props) {
 	async function handlePeriodClick(period: Period) {
 		setIsButtonActive(false)
 		setSelectedPeriod(period)
+
+		const period_spanned: Period = {
+			start: period.start,
+			end: new Date(period.start.getTime() + 1000 * 60 * props.selectedDurationMinute),
+		}
+
+		// showDialog()
+		// if action === NO ; then
+		// 		return
+		// fi
 		try {
 			// const end = new Date(period.start)
 			// end.setMinutes(end.get props.selectedDurationMinute)
-			const period_spanned: Period = {
-				start: period.start,
-				end: new Date(period.start.getTime() + 1000 * 60 * props.selectedDurationMinute),
-			}
 
 			await addEvent({
 				id: null,
@@ -114,6 +125,7 @@ export default function Candidate(props: Props) {
 					</li>
 				))}
 			</ul>
+			{isDialogVisible && <ConfirmationDialog />}
 		</div>
 	)
 }
