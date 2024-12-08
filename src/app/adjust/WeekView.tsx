@@ -1,9 +1,8 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
-import { ExcludePeriodState, formatTime, getEventPosition, toCrossPeriods } from '../../lib/draft/utils';
-import { ExcludePeriod, Period } from '@/lib/scheduling';
-import { Eclipse } from 'lucide-react';
+import React from 'react';
+import { ExcludePeriodState, formatTime, getEventPosition, periodsGroupByDate } from '../../lib/draft/utils';
+import { Period } from '@/lib/scheduling';
 import { setTimes } from '@/lib/utils';
 
 interface WeekViewProps {
@@ -21,17 +20,17 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
     date.setDate(currentDate.getDate() + i)
     return date
   })
-  const crossPeriods = toCrossPeriods(periods)
+  const periodsPerDate = Array.from(periodsGroupByDate(periods).entries())
 
-  const excludePeriod = excludePeriodState.calendar
   // 0, 1, ...24時間から除外時間を含まない時間を抽出
+  const excludePeriod = excludePeriodState.calendar
   const activeHours = hours
     .filter(i => (excludePeriod.start <= excludePeriod.end)
       ? (i <= excludePeriod.start || excludePeriod.end <= i)
       : (excludePeriod.end <= i && i <= excludePeriod.start)
     )
 
-  console.log("crossPeriods", crossPeriods)
+  console.log("periodsPerDate", periodsPerDate)
 
   // calendarの高さ そのまま分に対応する
   const heightPx = 60 * activeHours.length
@@ -57,17 +56,19 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
               </div>
             ))}
           </div>
-          {weekDates.map((date) => (
-            <div key={date.toISOString()} className="relative bg-white">
-              {crossPeriods
-                .filter(period => (period.crossOpen == "start" ? period.end : period.start).toDateString() === date.toDateString())
-                .map(period => {
+          {weekDates.map((date, i) => (
+            <div key={date.toDateString()} className="relative bg-white">
+              {(i => {
+                const [epoch, periods] = periodsPerDate[i]
+
+                // .filter(([_, epoch]: [number, Partial<Period>[]]) => new Date(epoch).toDateString() == date.toDateString())
+                return periods.map( period => {
                   const { top, height } = getEventPosition(period, excludePeriodState);
-                  const start = period.crossOpen == "start" ? "…" : formatTime(period.start)
-                  const end = period.crossOpen == "end" ? "…" : formatTime(period.end)
+                  const start = period.start ? formatTime(period.start) : "…"
+                  const end = period.end ? formatTime(period.end) : "…"
                   return (
                     <button
-                      key={(period.start??period.end).toString()}
+                      key={(period.start ?? period.end ?? epoch).toString()}
                       disabled={!isButtonActive}
                       className={`absolute w-full px-1 py-1 text-xs border rounded overflow-hidden transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
                       style={{
@@ -78,12 +79,18 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
                         borderColor: "#f0be5c",//lightsteelblue
                         color: "black",
                       }}
-                      onClick={() => handlePeriodClick(period)}
+                      onClick={() => {
+                        const start = period.start ?? new Date(epoch)
+                        return handlePeriodClick({
+                          start,
+                          end: period.end ?? setTimes(start)(24)
+                        })
+                      }}
                     >
                       <div>{start}  {end}</div>
                     </button>
                   );
-                })}
+                })})(i)}
             </div>
           ))}
         </div>

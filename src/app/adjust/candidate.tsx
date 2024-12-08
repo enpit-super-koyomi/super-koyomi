@@ -8,7 +8,7 @@ import { User } from "@prisma/client"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
-import { ExcludePeriodState, fitExcludePeriods, toCrossPeriods } from "@/lib/draft/utils"
+import { ExcludePeriodState, fitExcludePeriods } from "@/lib/draft/utils"
 
 type Props = {
 	title: string
@@ -27,14 +27,15 @@ export default function Candidate({excludePeriod, ...props}: Props) {
 	})
 
   useEffect(()=>{
-		const threshold = fitExcludePeriods(excludePeriod, toCrossPeriods(freePeriods))
+		console.log("freePeriods", freePeriods)
+		const threshold = fitExcludePeriods(excludePeriod, freePeriods)
 		// ...excludePeriod, ...threshold として元の範囲をそこから削った範囲に上書きして excludePeriodState.calendar を更新
-		if (threshold != null) setExcludePeriodState({...excludePeriodState, calendar: {...excludePeriod, ...threshold}})
-
+		const calendar = {...excludePeriod, ...threshold}
+		if (threshold != null) setExcludePeriodState(state => ({...state, calendar}))
 
     console.log("excludePeriod", excludePeriod)
-    console.log("excludePeriodState", excludePeriodState)
     console.log("threshold", threshold)
+		console.log("ExcludePeriodState.calendar", calendar)
   }, [freePeriods, excludePeriod])
 
 	useEffect(() => {
@@ -47,7 +48,6 @@ export default function Candidate({excludePeriod, ...props}: Props) {
 			const periods = await periodsOfUsers(props.selectedUserIds, excludePeriod)
 
 			const freePeriods = await findFreePeriods(props.selectedDurationMinute, periods)
-			console.log("freePfreePeriods:", freePeriods)
 
 			setFreePeriods(freePeriods)
 			setExcludePeriodState({...excludePeriodState, calculated: excludePeriod})
