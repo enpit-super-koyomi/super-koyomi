@@ -1,23 +1,39 @@
 "use client"
 
 import React from 'react';
-import { formatTime, getEventPosition } from '../../lib/draft/utils';
+import { ExcludePeriodState, formatTime, getEventPosition, periodsGroupByDate } from '../../lib/draft/utils';
 import { Period } from '@/lib/scheduling';
+import { setTimes } from '@/lib/utils';
 
 interface WeekViewProps {
   periods: Period[];
   currentDate: Date;
   handlePeriodClick: (period: Period) => Promise<void>
   isButtonActive: boolean
+  excludePeriodState: ExcludePeriodState,
 }
 
-export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActive }: WeekViewProps) {
+export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActive, excludePeriodState }: WeekViewProps) {
+  const hours = Array.from({ length: 24 }, (_, i) => i)
   const weekDates = Array.from(Array(7).keys()).map(i => {
     const date = new Date(currentDate)
     date.setDate(currentDate.getDate() + i)
     return date
   })
-  const hours = Array.from({ length: 24 }, (_, i) => i);
+  const periodsPerDate = Array.from(periodsGroupByDate(periods).entries())
+
+  // 0, 1, ...24時間から除外時間を含まない時間を抽出
+  const excludePeriod = excludePeriodState.calendar
+  const activeHours = hours
+    .filter(i => (excludePeriod.start <= excludePeriod.end)
+      ? (i <= excludePeriod.start || excludePeriod.end <= i)
+      : (excludePeriod.end <= i && i <= excludePeriod.start)
+    )
+
+  console.log("periodsPerDate", periodsPerDate)
+
+  // calendarの高さ そのまま分に対応する
+  const heightPx = 60 * activeHours.length
 
   return (
     <div className="max-w-full overflow-x-auto">
@@ -32,39 +48,49 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
             </div>
           ))}
         </div>
-        <div className="relative grid grid-cols-8 gap-px bg-gray-200" style={{ height: '1440px' }}>
+        <div className="relative grid grid-cols-8 gap-px bg-gray-200" style={{ height: `${heightPx}px` }}>
           <div className="sticky left-0 bg-white ">
-            {hours.map((hour) => (
+            {activeHours.map((hour) => (
               <div key={hour} className="h-[60px] border-t border-gray-200 text-xs text-gray-500 text-right pr-2">
                 {`${hour}:00`}
               </div>
             ))}
           </div>
-          {weekDates.map((date) => (
-            <div key={date.toISOString()} className="relative bg-white">
-              {periods
-                .filter((period) => period.start.toDateString() === date.toDateString())
-                .map((period) => {
-                  const { top, height } = getEventPosition(period);
+          {weekDates.map((date, i) => (
+            <div key={date.toDateString()} className="relative bg-white">
+              {(i => {
+                const [epoch, periods] = periodsPerDate[i]
+
+                // .filter(([_, epoch]: [number, Partial<Period>[]]) => new Date(epoch).toDateString() == date.toDateString())
+                return periods.map( period => {
+                  const { top, height } = getEventPosition(period, excludePeriodState);
+                  const start = period.start ? formatTime(period.start) : "…"
+                  const end = period.end ? formatTime(period.end) : "…"
                   return (
                     <button
-                      key={period.start.toString()}
+                      key={(period.start ?? period.end ?? epoch).toString()}
                       disabled={!isButtonActive}
                       className={`absolute w-full px-1 py-1 text-xs border rounded overflow-hidden transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
                       style={{
-                        top: `${top}%`,
-                        height: `${height}%`,
+                        top: `${top/heightPx*100}%`,
+                        height: `${height/heightPx*100}%`,
                         minHeight: '20px',
                         backgroundColor: `#f0be5c`,//lightsteelblue#b0c4de
                         borderColor: "#f0be5c",//lightsteelblue
                         color: "black",
                       }}
-                      onClick={() => handlePeriodClick(period)}
+                      onClick={() => {
+                        const start = period.start ?? new Date(epoch)
+                        return handlePeriodClick({
+                          start,
+                          end: period.end ?? setTimes(start)(24)
+                        })
+                      }}
                     >
-                      <div>{formatTime(period.start)}  {formatTime(period.end)}</div>
+                      <div>{start}  {end}</div>
                     </button>
                   );
-                })}
+                })})(i)}
             </div>
           ))}
         </div>

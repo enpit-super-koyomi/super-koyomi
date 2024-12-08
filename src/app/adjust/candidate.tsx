@@ -8,6 +8,7 @@ import { User } from "@prisma/client"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
+import { ExcludePeriodState, fitExcludePeriods } from "@/lib/draft/utils"
 
 type Props = {
 	title: string
@@ -17,10 +18,25 @@ type Props = {
 	selectedDurationMinute: number
 }
 
-export default function Candidate(props: Props) {
+export default function Candidate({excludePeriod, ...props}: Props) {
 	const [isButtonActive, setIsButtonActive] = useState(false)
 	const [freePeriods, setFreePeriods] = useState<Period[]>([])
 	const [selectedPeriod, setSelectedPeriod] = useState<Period | null>(null)
+	const [excludePeriodState, setExcludePeriodState] = useState<ExcludePeriodState>({
+		calendar: { start: 0, end: 0 } // calendar に適用する除外時間
+	})
+
+  useEffect(()=>{
+		console.log("freePeriods", freePeriods)
+		const threshold = fitExcludePeriods(excludePeriod, freePeriods)
+		// ...excludePeriod, ...threshold として元の範囲をそこから削った範囲に上書きして excludePeriodState.calendar を更新
+		const calendar = {...excludePeriod, ...threshold}
+		if (threshold != null) setExcludePeriodState(state => ({...state, calendar}))
+
+    console.log("excludePeriod", excludePeriod)
+    console.log("threshold", threshold)
+		console.log("ExcludePeriodState.calendar", calendar)
+  }, [freePeriods, excludePeriod])
 
 	useEffect(() => {
 		setIsButtonActive(props.title.trim() !== "")
@@ -29,12 +45,12 @@ export default function Candidate(props: Props) {
 	async function handleSchedule() {
 		setIsButtonActive(false)
 		try {
-			const periods = await periodsOfUsers(props.selectedUserIds, props.excludePeriod)
+			const periods = await periodsOfUsers(props.selectedUserIds, excludePeriod)
 
 			const freePeriods = await findFreePeriods(props.selectedDurationMinute, periods)
-			console.log("freePfreePeriods:", freePeriods)
 
 			setFreePeriods(freePeriods)
+			setExcludePeriodState({...excludePeriodState, calculated: excludePeriod})
 		} catch (e) {
 			window.alert("Sorry, an error has occurred!")
 			console.error(e)
@@ -95,6 +111,7 @@ export default function Candidate(props: Props) {
 					handlePeriodClick={handlePeriodClick}
 					periods={freePeriods}
 					isButtonActive={isButtonActive}
+					excludePeriodState={excludePeriodState}
 				/> : ""}
 
 				{freePeriods.map(period => (

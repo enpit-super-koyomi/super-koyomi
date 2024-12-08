@@ -84,7 +84,7 @@ export async function findFreePeriods(eventDurationMinute: number, eventsOfUsers
     }
 
     busyCount += change.countDelta;
-    
+
     if (busyCount === 0) {
       freeDateStart = change.timestamp;
     }
