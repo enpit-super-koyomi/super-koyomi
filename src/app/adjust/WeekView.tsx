@@ -3,12 +3,14 @@
 import React from 'react';
 import { formatTime, getEventPosition } from '../../lib/draft/utils';
 import { Period } from '@/lib/scheduling';
+import { Course } from 'twinte-parser';
 
 interface WeekViewProps {
   periods: Period[];
   currentDate: Date;
   handlePeriodClick: (period: Period) => Promise<void>
   isButtonActive: boolean
+  courses: Course[]
 }
 
 export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActive }: WeekViewProps) {

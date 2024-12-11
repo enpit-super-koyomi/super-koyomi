@@ -24,6 +24,8 @@ import { User } from "@prisma/client"
 // import { formatDate, formatDuration } from "@/lib/utils";
 import {formatDuration } from "@/lib/utils";
 import Candidate from "./candidate";
+import { Course } from "twinte-parser";
+import ImportFileAlone from "@/components/ImportFileAlone";
 
 // const people = [
 // 	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
@@ -39,47 +41,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
 	const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
 	const [excludePeriod, setExcludePeriod] = useState<ExcludePeriod>({ start: 22, end: 8 })
-	// const [isButtonActive, setIsButtonActive] = useState(false)
-
-  useEffect(() => {
-		// setIsButtonActive(title.trim() !== "")
-	}, [title])
-
-  // async function handleSchedule() {
-	// 	setIsButtonActive(false)
-  //   try {
-  //     const period = await schedule(
-  //       selectedDurationMinute,
-  //       selectedUserIds,
-  //       excludePeriod
-  //     );
-
-  //     await addEvent({
-  //       id: null,
-  //       summary: title,
-  //       start: period?.start,
-  //       end: period?.end,
-  //       description: null,
-  //       location: null,
-  //       status: "CONFIRMED",
-  //       attendees: users.filter(user => selectedUserIds.includes(user.id)),
-  //     });
-
-  //     toast(
-  //       `カレンダーに追加されました。\n${formatDate(period.start)} から${formatDuration(selectedDurationMinute)}`,
-  //       {
-  //         onClick: () => {
-  //           open("https://calendar.google.com/calendar", "_blank");
-  //         },
-  //       }
-  //     );
-  //   } catch (e) {
-	// 		window.alert("Sorry, an error has occurred!")
-	// 		console.error(e)
-  //   } finally {
-	// 		setIsButtonActive(true)
-  //   }
-  // }
+  const [courses, setCourses] = useState<Course[]>([])
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -126,7 +88,8 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
             ))}
           </div>
         </div>
-        
+        <ImportFile setCourses={setCourses}/>
+
 				{/* <Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
           「{title || "-"}」の日時を決定する
         </Button> */}
@@ -137,6 +100,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
         selectedUserIds={selectedUserIds}
         title={title}
         users={users}
+        courses={courses}
       />
       <ToastContainer />
     </div>
@@ -238,4 +202,14 @@ function Exclusion({
       </div>
     </div>
 	)
+}
+
+type Prop = {
+	setCourses: React.Dispatch<Course[]>,
+}
+
+function ImportFile(prop: Prop) {
+  return(
+    <ImportFileAlone {...prop} />
+  )
 }

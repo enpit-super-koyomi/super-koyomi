@@ -8,6 +8,7 @@ import { User } from "@prisma/client"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
+import { Course } from "twinte-parser"
 
 type Props = {
 	title: string
@@ -15,6 +16,7 @@ type Props = {
 	selectedUserIds: string[]
 	excludePeriod: ExcludePeriod
 	selectedDurationMinute: number
+	courses: Course[]
 }
 
 export default function Candidate(props: Props) {
