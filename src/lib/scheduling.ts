@@ -3,7 +3,7 @@
 import { getGuestsEvents, getHostEvents } from "@/lib/getEvents";
 import { excludePeriodOfOffsetDays } from "./utils";
 
-export type Period = {
+export type Period = { //開始日時と終了日時を保持する型
   start: Date,
   end: Date
 };
@@ -84,7 +84,7 @@ export async function findFreePeriods(eventDurationMinute: number, eventsOfUsers
     }
 
     busyCount += change.countDelta;
-    
+
     if (busyCount === 0) {
       freeDateStart = change.timestamp;
     }
