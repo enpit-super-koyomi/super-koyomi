@@ -1,9 +1,21 @@
 import { start } from "repl"
 import { Course, Day } from "twinte-parser"
+import { setTimes } from "./utils"
+import { Period } from "./scheduling"
+
+export declare enum PeriodType {
+  Free,
+  Class,
+}
+
+export type PeriodVar = {
+  period: Period,
+  type: PeriodType
+}
 
 export type CoursePeriod = {
-  course: Course,
-  period: Period
+  course: Course
+  periods: Period[],
 }
 
 const courseDays = [
@@ -46,7 +58,15 @@ export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
       const startTime = classStartTimes.at(s.period)
       if (startTime == undefined) return []
       const [hh, mm] = startTime
-      setTimes
+      const start = setTimes(date)(hh, mm)
+      const end = new Date(start)
+      end.setMinutes(end.getMinutes() + classLengthMinutes)
+
+      return { start, end }
     })
     .filter(date => date != undefined)
 }
+
+// export const mixFreeClassPeriod = (freePeriods: Period[], classPeriod: Period[]) => {
+
+// }

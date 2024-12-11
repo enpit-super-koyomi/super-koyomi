@@ -4,6 +4,7 @@ import React from 'react';
 import { formatTime, getEventPosition } from '../../lib/draft/utils';
 import { Period } from '@/lib/scheduling';
 import { Course } from 'twinte-parser';
+import { CoursePeriod, PeriodType, PeriodVar, courseToPeriods } from '@/lib/course';
 
 interface WeekViewProps {
   periods: Period[];
@@ -13,13 +14,25 @@ interface WeekViewProps {
   courses: Course[]
 }
 
-export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActive }: WeekViewProps) {
+export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActive, courses }: WeekViewProps) {
   const weekDates = Array.from(Array(7).keys()).map(i => {
     const date = new Date(currentDate)
     date.setDate(currentDate.getDate() + i)
     return date
   })
   const hours = Array.from({ length: 24 }, (_, i) => i);
+
+  const coursePeriods: CoursePeriod[] = courses.map(course => ({ course, periods: courseToPeriods(currentDate, course)}))
+
+  // const periodVars: PeriodVar[] = [
+  //   ...periods.map(period => ({ period, type: PeriodType.Free }) ),
+  //   ...periods.map( => ({ period, type: PeriodType.Free }) ),
+  // ]
+
+  type CourseWithPeriod = {
+    course: Course,
+    period: Period
+  }
 
   return (
     <div className="max-w-full overflow-x-auto">
@@ -44,7 +57,7 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
           </div>
           {weekDates.map((date) => (
             <div key={date.toISOString()} className="relative bg-white">
-              {periods
+              {[...periods
                 .filter((period) => period.start.toDateString() === date.toDateString())
                 .map((period) => {
                   const { top, height } = getEventPosition(period);
@@ -66,7 +79,38 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
                       <div>{formatTime(period.start)}  {formatTime(period.end)}</div>
                     </button>
                   );
-                })}
+                }),
+
+                ...coursePeriods
+                  .flatMap(({course, periods}) =>
+                    periods.flatMap(period =>
+                      period.start.toDateString() === date.toDateString()
+                      ? [{ course, period } as CourseWithPeriod]
+                      : [])
+                  )
+                  .map(({course, period}) => {
+                    const {top, height} = getEventPosition(period)
+                    return <button
+                      key={period.start.toString()}
+                      disabled={!isButtonActive}
+                      className={`absolute w-full px-1 py-1 text-xs border rounded overflow-hidden transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
+                      style={{
+                        top: `${top}%`,
+                        height: `${height}%`,
+                        minHeight: '20px',
+                        backgroundColor: `#f0be5c`,//lightsteelblue#b0c4de
+                        borderColor: "#f0be5c",//lightsteelblue
+                        color: "black",
+                      }}
+                      onClick={() => handlePeriodClick(period)}
+                    >
+                      <div>
+                        <div>{course.name}</div>
+                        <div>{formatTime(period.start)}  {formatTime(period.end)}</div>
+                      </div>
+                    </button>
+                  })
+                ]}
             </div>
           ))}
         </div>

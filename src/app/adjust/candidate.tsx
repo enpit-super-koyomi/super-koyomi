@@ -97,6 +97,7 @@ export default function Candidate(props: Props) {
 					handlePeriodClick={handlePeriodClick}
 					periods={freePeriods}
 					isButtonActive={isButtonActive}
+					courses={props.courses}
 				/> : ""}
 
 				{freePeriods.map(period => (
