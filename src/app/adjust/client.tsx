@@ -54,7 +54,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
   //       selectedUserIds,
   //       excludePeriod
   //     );
-  
+
   //     await addEvent({
   //       id: null,
   //       summary: title,
