@@ -12,7 +12,8 @@ export default function ImportFile({allCourses}: {allCourses: Course[]}) {
   useEffect(() => {
     if (!contents) return
     const codes = parseRSReferToCodes(contents)
-    setCourses(allCourses.filter(c => codes.includes(c.code)))
+    console.log("codes", codes)
+    // if (codes) setCourses(allCourses.filter(c => codes.includes(c.code)))
   }, [contents])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +48,10 @@ export default function ImportFile({allCourses}: {allCourses: Course[]}) {
       <h3>your courses</h3>
       {name == undefined ? <div>file has not uploaded</div> :
       <Courses courses={courses} />}
+    </div>
+    <div>
+      <h3>all courses (head 10)</h3>
+      <Courses courses={allCourses.slice(0,10)} />
     </div>
   </div>)
 }
