@@ -45,6 +45,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
 		// setIsButtonActive(title.trim() !== "")
 	}, [title])
 
+  //予定を登録する関数
   // async function handleSchedule() {
 	// 	setIsButtonActive(false)
   //   try {
@@ -53,7 +54,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
   //       selectedUserIds,
   //       excludePeriod
   //     );
-
+  
   //     await addEvent({
   //       id: null,
   //       summary: title,
@@ -126,7 +127,7 @@ export default function SchedulePlanner({ users }: { users: User[] }) {
             ))}
           </div>
         </div>
-        
+
 				{/* <Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
           「{title || "-"}」の日時を決定する
         </Button> */}

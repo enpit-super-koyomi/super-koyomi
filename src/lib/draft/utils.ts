@@ -21,6 +21,7 @@ export type ExcludePeriodState = {
 	calendar: ExcludePeriod
 }
 
+//予定候補表示のボタン位置決定に使用
 export function getEventPosition(
 	period: Partial<Period>,
 	excludePeriodState: ExcludePeriodState
