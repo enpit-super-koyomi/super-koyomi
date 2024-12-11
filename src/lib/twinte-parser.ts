@@ -1,3 +1,5 @@
+"use server"
+
 import { downloadKDB, parseKDB } from "twinte-parser"
 const kdb = downloadKDB()
 
