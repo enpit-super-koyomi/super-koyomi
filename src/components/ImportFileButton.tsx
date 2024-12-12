@@ -26,19 +26,19 @@ export default function ImportFileButton(prop: Prop) {
 	const [file, setFile] = useState<File | null>(null)
 
 	const searchCourses = useCallback(() => {
-		if (!contents) return
+		if (!contents || !file?.name) return
 		const codes = parseRSReferToCodes(contents)
 		console.log("codes", codes)
 		const yourCourses = allCourses.filter(c => codes.includes(c.code))
 		if (yourCourses.length == 0) {
 			toast(
-				`科目が見つかりませんでした。 ${file?.name} の形式が間違っているかもしれません。\nTWINS から履修情報を出力した RSReferCSV.csv に類するファイルであることをご確認ください。`,
+				`科目が見つかりませんでした。 ${file.name} の形式が間違っているかもしれません。\nTWINS から履修情報を出力した RSReferCSV.csv に類するファイルであることをご確認ください。`,
 				{ type: "error" }
 			)
 			setUploadStatus("error")
 		} else setUploadStatus("done")
 		setCourses(yourCourses)
-	}, [allCourses, contents, setCourses, file])
+	}, [allCourses, contents, setCourses, file?.name])
 
 	useEffect(() => {
 		searchCourses()
@@ -76,6 +76,7 @@ export default function ImportFileButton(prop: Prop) {
 
 	const resetUpload = () => {
 		setFile(null)
+		setContents(undefined)
 		setUploadStatus("yet")
 	}
 
