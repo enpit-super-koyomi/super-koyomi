@@ -36,7 +36,7 @@ export default function Candidate(props: Props) {
 
 			setFreePeriods(freePeriods)
 		} catch (e) {
-			window.alert("Sorry, an error has occurred!")
+			toast("Sorry, free time compute error!", { type: "error", autoClose: false });
 			console.error(e)
 		} finally {
 			setIsButtonActive(true)
@@ -76,7 +76,7 @@ export default function Candidate(props: Props) {
 				}
 			)
 		} catch (e) {
-			window.alert("Sorry, an error has occurred!")
+			toast("Sorry, calendar event addition error!", { type: "error", autoClose: false });
 			console.error(e)
 		} finally {
 			setIsButtonActive(true)
