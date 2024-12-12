@@ -2,16 +2,6 @@ import { setTimes } from "./utils"
 import { Period } from "./scheduling"
 import { Course, Day } from "./twinte-parser-type"
 
-export declare enum PeriodType {
-	Free,
-	Class,
-}
-
-export type PeriodVar = {
-	period: Period
-	type: PeriodType
-}
-
 export type CoursePeriod = {
 	course: Course
 	periods: Period[]
