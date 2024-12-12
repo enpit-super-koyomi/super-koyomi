@@ -5,10 +5,12 @@ import { addEvent } from "@/lib/addEvent"
 import { ExcludePeriod, Period, findFreePeriods, periodsOfUsers } from "@/lib/scheduling"
 import { formatDate, formatDuration } from "@/lib/utils"
 import { User } from "@prisma/client"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
 import { Course } from "@/lib/twinte-parser-type"
+import { YesNoDialog } from "@/components/ui/dialog"
+
 type Props = {
 	title: string
 	users: User[]
@@ -22,6 +24,9 @@ export default function Candidate(props: Props) {
 	const [isButtonActive, setIsButtonActive] = useState(false)
 	const [freePeriods, setFreePeriods] = useState<Period[]>([])
 	const [selectedPeriod, setSelectedPeriod] = useState<Period | null>(null)
+	const [spannedPeriod, setSpannedPeriod] = useState<Period | null>(null)
+
+	const yesNoDialogRef = useRef<HTMLDialogElement>(null)
 
 	useEffect(() => {
 		setIsButtonActive(props.title.trim() !== "")
@@ -37,24 +42,16 @@ export default function Candidate(props: Props) {
 
 			setFreePeriods(freePeriods)
 		} catch (e) {
-			window.alert("Sorry, an error has occurred!")
+			toast("Sorry, free time compute error!", { type: "error", autoClose: false });
 			console.error(e)
 		} finally {
 			setIsButtonActive(true)
 		}
 	}
 
-	async function handlePeriodClick(period: Period) {
-		setIsButtonActive(false)
-		setSelectedPeriod(period)
+	async function addConfirmedPeriodToCalendar(period_spanned: Period) {
+		console.log("Adding")
 		try {
-			// const end = new Date(period.start)
-			// end.setMinutes(end.get props.selectedDurationMinute)
-			const period_spanned: Period = {
-				start: period.start,
-				end: new Date(period.start.getTime() + 1000 * 60 * props.selectedDurationMinute),
-			}
-
 			await addEvent({
 				id: null,
 				summary: props.title,
@@ -67,7 +64,7 @@ export default function Candidate(props: Props) {
 			})
 
 			toast(
-				`カレンダーに追加されました。\n${formatDate(period.start)} から${formatDuration(
+				`カレンダーに追加されました。\n${formatDate(period_spanned.start)} から${formatDuration(
 					props.selectedDurationMinute
 				)}`,
 				{
@@ -77,15 +74,38 @@ export default function Candidate(props: Props) {
 				}
 			)
 		} catch (e) {
-			window.alert("Sorry, an error has occurred!")
+			toast("Sorry, calendar event addition error!", { type: "error", autoClose: false });
 			console.error(e)
-		} finally {
-			setIsButtonActive(true)
 		}
+	}
+
+	async function handlePeriodClick(period: Period) {
+		setSelectedPeriod(period)
+
+		const period_spanned: Period = {
+			start: period.start,
+			end: new Date(period.start.getTime() + 1000 * 60 * props.selectedDurationMinute),
+		}
+		setSpannedPeriod(period_spanned)
+		yesNoDialogRef.current?.showModal()
+	}
+
+	function handleDialogConfirm() {
+		if (!spannedPeriod) {
+			toast("Invalid state: spannedPeriod is null", { type: "error" })
+			return
+		}
+		addConfirmedPeriodToCalendar(spannedPeriod)
 	}
 
 	return (
 		<div className="py-4">
+			<YesNoDialog
+				message="Are you sure you want to add this event to your calendar?"
+				ref={yesNoDialogRef}
+				onYes={() => handleDialogConfirm()}
+				onNo={() => {}}
+			/>
 			<Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
 				「{props.title || "-"}」の日時候補を探す
 			</Button>
