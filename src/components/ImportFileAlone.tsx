@@ -2,7 +2,7 @@
 
 import { fetchCourses } from "@/lib/twinte-parser"
 import { Course } from "@/lib/twinte-parser-type"
-import { Dispatch, useEffect, useState } from "react"
+import { Dispatch, useCallback, useEffect, useState } from "react"
 
 const parseRSReferToCodes = (content: string): string[] =>
 	content.split("\n").map(line => line.replaceAll(/["\s\r]/gi, ""))
@@ -18,20 +18,22 @@ export default function ImportFileAlone(prop: Prop) {
 	const [allCourses, setAllCourses] = useState<Course[]>([])
 	const [courses, setCourses] = useState<Course[]>([])
 
-	const searchCourses = (allCourses: Course[]) => {
+	const searchCourses = useCallback(() => {
 		if (!contents) return
 		const codes = parseRSReferToCodes(contents)
 		console.log("codes", codes)
 		setCourses(allCourses.filter(c => codes.includes(c.code)))
-	}
+	}, [allCourses, contents])
+
+	const { setCourses: setParentCourses } = prop
 
 	useEffect(() => {
-		searchCourses(allCourses)
-	}, [contents, allCourses])
+		searchCourses()
+	}, [contents, allCourses, searchCourses])
 
 	useEffect(() => {
-		prop.setCourses(courses)
-	}, [courses])
+		setParentCourses(courses)
+	}, [courses, setParentCourses])
 
 	const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const all = await fetchCourses()
@@ -74,7 +76,7 @@ const Courses = ({ courses }: { courses: Course[] }) => {
 	return (
 		<div>
 			{courses.map(course => (
-				<div id={course.code}>
+				<div key={course.code}>
 					<pre>{JSON.stringify(course)}</pre>
 				</div>
 			))}

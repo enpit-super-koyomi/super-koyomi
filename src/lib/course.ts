@@ -55,7 +55,7 @@ const isNextSchedule = (prevSchedule: CourseSchedule, schedule: CourseSchedule) 
 	prevSchedule.day == schedule.day &&
 	prevSchedule.period + 1 == schedule.period
 
-// todo 
+// todo
 const getCurrentModule = () => {
   return "秋B"
 }
@@ -90,14 +90,14 @@ export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
 
   // 連続するnコマを一つの period にまとめる
 
-	const [_, [periodss, lastPeriods]] = periods.reduce(
-		([lastSchedule, [periodss, periods]], period, i) => {
+	const {p: [periodss, lastPeriods]} = periods.reduce(
+		({lastSchedule, p: [periodss, periods]}, period, i) => {
 			const schedule = currentSchedules[i]
 			return (lastSchedule ? isNextSchedule(lastSchedule, schedule) : true)
-				? [schedule, [periodss, [...periods, period]]]
-				: [schedule, [[...periodss, periods], [period]]]
+				? { lastSchedule: schedule, p: [periodss, [...periods, period]]}
+				: { lastSchedule: schedule, p: [[...periodss, periods], [period]]}
 		},
-		[undefined, [[], []]] as [CourseSchedule | undefined, periods: [Period[][], Period[]]]
+		{ lastSchedule: undefined, p: [[], []] } as { lastSchedule: CourseSchedule | undefined, p: [Period[][], Period[]] }
 	)
 
 	return [...periodss, lastPeriods].flatMap(periods =>

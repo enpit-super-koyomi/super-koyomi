@@ -8,8 +8,7 @@ import { User } from "@prisma/client"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
-import { Course } from "twinte-parser"
-
+import { Course } from "@/lib/twinte-parser-type"
 type Props = {
 	title: string
 	users: User[]

@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import parseKDB, { Course } from "twinte-parser"
+import { useCallback, useEffect, useState } from "react"
+import { Course } from "@/lib/twinte-parser-type"
 
 const parseRSReferToCodes = (content: string): string[] =>
 	content.split("\n").map(line => line.replaceAll(/["\s\r]/gi, ""))
@@ -12,16 +12,16 @@ export default function ImportFile({ allCourses }: { allCourses: Course[] }) {
 	const [contents, setContents] = useState<string>()
 	const [courses, setCourses] = useState<Course[]>([])
 
-	const searchCourses = () => {
+	const searchCourses = useCallback(() => {
 		if (!contents) return
 		const codes = parseRSReferToCodes(contents)
 		console.log("codes", codes)
 		setCourses(allCourses.filter(c => codes.includes(c.code)))
-	}
+	}, [contents, allCourses])
 
 	useEffect(() => {
 		searchCourses()
-	}, [contents])
+	}, [contents, searchCourses])
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = e.target.files
@@ -61,7 +61,7 @@ const Courses = ({ courses }: { courses: Course[] }) => {
 	return (
 		<div>
 			{courses.map(course => (
-				<div id={course.code}>
+				<div key={course.code}>
 					<pre>{JSON.stringify(course)}</pre>
 				</div>
 			))}

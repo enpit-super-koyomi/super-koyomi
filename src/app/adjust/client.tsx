@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"
-// import { Button } from "@/components/ui/button"
+import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -12,19 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-// import { ToastContainer, toast } from "react-toastify";
 import { ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// import { ExcludePeriod, schedule } from "@/lib/scheduling"
 import { ExcludePeriod} from "@/lib/scheduling"
-
 import { User } from "@prisma/client"
-// import { addEvent } from "@/lib/addEvent";
-// import { formatDate, formatDuration } from "@/lib/utils";
 import {formatDuration } from "@/lib/utils";
 import Candidate from "./candidate";
-import { Course } from "twinte-parser";
+import { Course } from "@/lib/twinte-parser-type"
 import ImportFileAlone from "@/components/ImportFileAlone";
 
 // const people = [
