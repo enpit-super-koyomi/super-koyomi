@@ -59,7 +59,7 @@ export default function ImportFileAlone(prop: Prop) {
 				<p>content of {name}</p>
 				<pre className="bg-slate-50">{contents}</pre>
 			</div>
-			<button onClick={() => searchCourses(allCourses)}>reload </button>
+			<button onClick={() => searchCourses()}>reload </button>
 			<div>
 				<h3>your courses</h3>
 				{name == undefined ? <div>file has not uploaded</div> : <Courses courses={courses} />}

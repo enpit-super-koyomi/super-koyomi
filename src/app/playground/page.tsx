@@ -1,8 +1,8 @@
 import ImportFile from "@/components/ImportFile";
-import { loadCourses } from "@/lib/twinte-parser";
+import { fetchCourses } from "@/lib/twinte-parser";
 
 export default async function PlayGround() {
-  const allCourses = await loadCourses()
+  const allCourses = await fetchCourses()
 
   return(
     <div

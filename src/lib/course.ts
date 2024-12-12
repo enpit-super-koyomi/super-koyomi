@@ -34,7 +34,8 @@ const nextDateOfDay = (currentDate: Date, day: Day) => {
 	if (i < 0) return undefined
 	const j = currentDate.getDay()
 	const date = new Date(currentDate)
-	date.setDate(date.getDate() + i - j)
+	const offset = i - j // 0 <= i,j <= 6
+	date.setDate(date.getDate() + (offset < 0 ? offset + 7 : offset)) // mod offset 7 を基準日に足す
 	return date
 }
 

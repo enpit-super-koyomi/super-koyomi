@@ -117,8 +117,8 @@ export function WeekView({
 												top: `${top}%`,
 												height: `${height}%`,
 												minHeight: "20px",
-												backgroundColor: `#8dd8ec`, //lightsteelblue#b0c4de
-												borderColor: "#8dd8ec", //lightsteelblue
+												backgroundColor: `#94dff3`, //lightsteelblue#b0c4de
+												borderColor: "#94dff3", //lightsteelblue
 												color: "black",
 											}}
 											onClick={() => handleClassClick({ course, period })}>
