@@ -3,15 +3,25 @@
 import React from 'react';
 import { formatTime, getEventPosition } from '../../lib/draft/utils';
 import { Period } from '@/lib/scheduling';
-import { Course } from 'twinte-parser';
+// import { Course } from 'twinte-parser';
 import { CoursePeriod, PeriodType, PeriodVar, courseToPeriods } from '@/lib/course';
+import { Course } from '@/lib/twinte-parser-type';
 
-interface WeekViewProps {
+type WeekViewProps = {
   periods: Period[];
   currentDate: Date;
   handlePeriodClick: (period: Period) => Promise<void>
   isButtonActive: boolean
   courses: Course[]
+}
+
+const handleClassClick = (courseWithPeriod: CourseWithPeriod) => {
+  console.log("clicked:", courseWithPeriod)
+}
+
+type CourseWithPeriod = {
+  course: Course,
+  period: Period
 }
 
 export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActive, courses }: WeekViewProps) {
@@ -24,15 +34,13 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
 
   const coursePeriods: CoursePeriod[] = courses.map(course => ({ course, periods: courseToPeriods(currentDate, course)}))
 
+  console.log("coursePeriods:", coursePeriods)
+
   // const periodVars: PeriodVar[] = [
   //   ...periods.map(period => ({ period, type: PeriodType.Free }) ),
   //   ...periods.map( => ({ period, type: PeriodType.Free }) ),
   // ]
 
-  type CourseWithPeriod = {
-    course: Course,
-    period: Period
-  }
 
   return (
     <div className="max-w-full overflow-x-auto">
@@ -98,11 +106,11 @@ export function WeekView({ periods, currentDate, handlePeriodClick, isButtonActi
                         top: `${top}%`,
                         height: `${height}%`,
                         minHeight: '20px',
-                        backgroundColor: `#f0be5c`,//lightsteelblue#b0c4de
-                        borderColor: "#f0be5c",//lightsteelblue
+                        backgroundColor: `#8dd8ec`,//lightsteelblue#b0c4de
+                        borderColor: "#8dd8ec",//lightsteelblue
                         color: "black",
                       }}
-                      onClick={() => handlePeriodClick(period)}
+                      onClick={() => handleClassClick({course, period})}
                     >
                       <div>
                         <div>{course.name}</div>

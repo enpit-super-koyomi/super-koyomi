@@ -1,15 +1,15 @@
 "use client"
 
-import { loadCourses } from "@/lib/twinte-parser"
-import { useEffect, useState } from "react"
-import parseKDB, { Course } from "twinte-parser"
+import { fetchCourses } from "@/lib/twinte-parser"
+import { Course } from "@/lib/twinte-parser-type"
+import { Dispatch, useEffect, useState } from "react"
 
 const parseRSReferToCodes = (content: string): string[] =>
 	content.split("\n").map(line => line.replaceAll(/["\s\r]/gi, ""))
 
 
 type Prop = {
-	setCourses: React.Dispatch<Course[]>,
+	setCourses: Dispatch<Course[]>,
 }
 
 export default function ImportFileAlone(prop: Prop) {
@@ -32,9 +32,9 @@ export default function ImportFileAlone(prop: Prop) {
 	useEffect(() => {
 		prop.setCourses(courses)
 	}, [courses])
-	
+
 	const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const all = await loadCourses()
+		const all = await fetchCourses()
 		if (!contents) setAllCourses(all)
 
 		const files = e.target.files
