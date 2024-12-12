@@ -8,13 +8,14 @@ import { User } from "@prisma/client"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
-
+import { Course } from "@/lib/twinte-parser-type"
 type Props = {
 	title: string
 	users: User[]
 	selectedUserIds: string[]
 	excludePeriod: ExcludePeriod
 	selectedDurationMinute: number
+	courses: Course[]
 }
 
 export default function Candidate(props: Props) {
@@ -95,6 +96,7 @@ export default function Candidate(props: Props) {
 					handlePeriodClick={handlePeriodClick}
 					periods={freePeriods}
 					isButtonActive={isButtonActive}
+					courses={props.courses}
 				/> : ""}
 
 				{freePeriods.map(period => (

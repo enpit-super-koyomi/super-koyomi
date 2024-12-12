@@ -21,6 +21,15 @@ export const dateToGCalFormat = (date: Date): string =>
 export const truncateTime = (date: Date): Date =>
 	new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
+export const setTimes = (baseDate: Date) => (hours: number, minutes?: number, seconds?: number, miliseconds?: number): Date => {
+	const date = truncateTime(baseDate)
+	date.setHours(hours)
+	if (minutes) date.setMinutes(minutes)
+	if (seconds) date.setSeconds(seconds)
+	if (miliseconds) date.setMilliseconds(miliseconds)
+	return date
+}
+
 export const excludePeriodOfOffsetDays = (
 	excludePeriod: ExcludePeriod,
 	offsetDays?: number,
@@ -70,3 +79,6 @@ export const formatDate = (date: Date): string => {
 
 	return formattedDate
 }
+
+export const max = (a: number, b: number | undefined | null) => (b ? (a < b ? b : a) : a)
+export const min = (a: number, b: number | undefined | null) => (b ? (a > b ? b : a) : a)
