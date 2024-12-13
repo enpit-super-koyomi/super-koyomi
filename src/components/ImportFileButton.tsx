@@ -1,7 +1,7 @@
 "use client"
 
-import { fetchCourses } from "@/lib/twinte-parser"
-import { Course } from "@/lib/twinte-parser-type"
+import { fetchCourses } from "@/third-party/twinte-parser"
+import { Course } from "@/third-party/twinte-parser-type"
 import { Dispatch, useCallback, useEffect, useRef, useState } from "react"
 import { Check, X, Upload } from "lucide-react"
 import { Button } from "./ui/button"

@@ -18,7 +18,7 @@ import { ExcludePeriod } from "@/lib/scheduling"
 import { User } from "@prisma/client"
 import { formatDuration } from "@/lib/utils"
 import Candidate from "./candidate"
-import { Course } from "@/lib/twinte-parser-type"
+import { Course } from "@/third-party/twinte-parser-type"
 import ImportFileButton from "@/components/ImportFileButton"
 import { Session } from "next-auth"
 

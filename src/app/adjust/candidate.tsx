@@ -8,7 +8,7 @@ import { User } from "@prisma/client";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { WeekView } from "./WeekView";
-import { Course } from "@/lib/twinte-parser-type";
+import { Course } from "@/third-party/twinte-parser-type";
 import { YesNoDialog } from "@/components/ui/dialog";
 import { courseToPeriods } from "@/lib/course";
 

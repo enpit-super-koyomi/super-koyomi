@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { Course } from "@/lib/twinte-parser-type"
+import { Course } from "@/third-party/twinte-parser-type"
 
 const parseRSReferToCodes = (content: string): string[] =>
 	content.split("\n").map(line => line.replaceAll(/["\s\r]/gi, ""))
