@@ -10,6 +10,7 @@ import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
 import { Course } from "@/lib/twinte-parser-type"
 import { YesNoDialog } from "@/components/ui/dialog"
+import { courseToPeriods } from "@/lib/course"
 
 type Props = {
 	title: string
@@ -27,6 +28,7 @@ export default function Candidate(props: Props) {
 	const [spannedPeriod, setSpannedPeriod] = useState<Period | null>(null)
 
 	const yesNoDialogRef = useRef<HTMLDialogElement>(null)
+	const coursePeriods = props.courses.flatMap(course => courseToPeriods(new Date(), course))
 
 	useEffect(() => {
 		setIsButtonActive(props.title.trim() !== "")
@@ -35,7 +37,10 @@ export default function Candidate(props: Props) {
 	async function handleSchedule() {
 		setIsButtonActive(false)
 		try {
-			const periods = await periodsOfUsers(props.selectedUserIds, props.excludePeriod)
+			const periods = [
+				...await periodsOfUsers(props.selectedUserIds, props.excludePeriod),
+				coursePeriods
+			]
 
 			const freePeriods = await findFreePeriods(props.selectedDurationMinute, periods)
 			console.log("freePfreePeriods:", freePeriods)
