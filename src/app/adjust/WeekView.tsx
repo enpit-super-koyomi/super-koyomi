@@ -4,7 +4,7 @@ import React from "react"
 import { formatTime, getEventPosition } from "../../lib/draft/utils"
 import { Period } from "@/lib/scheduling"
 import { CoursePeriod, courseToPeriods } from "@/lib/course"
-import { Course } from "@/lib/twinte-parser-type"
+import { Course } from "@/third-party/twinte-parser-type"
 
 type WeekViewProps = {
 	periods: Period[]

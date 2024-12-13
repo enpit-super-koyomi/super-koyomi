@@ -1,6 +1,6 @@
 import { setTimes } from "./utils"
 import { Period } from "./scheduling"
-import { Course, Day } from "./twinte-parser-type"
+import { Course, Day } from "@/third-party/twinte-parser-type"
 
 export type CoursePeriod = {
 	course: Course
