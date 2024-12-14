@@ -16,6 +16,11 @@ type Prop = {
 	setCourses: Dispatch<Course[]>
 }
 
+/**
+ * 履修中の科目一覧データを読み込むためのボタン。
+ * @param prop.setCourses - 読み込まれた科目情報を記憶するコールバック関数
+ * @returns 読み込みボタン
+ */
 export default function ImportFileButton(prop: Prop) {
 	const { setCourses } = prop
 	const [contents, setContents] = useState<string>()

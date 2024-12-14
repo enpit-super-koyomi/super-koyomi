@@ -1,3 +1,6 @@
+/**
+ * KdB全科目のデータを解析する。
+ */
 "use server"
 
 import fs from "fs"
@@ -20,4 +23,3 @@ export const fetchCourses = () => {
 // export const getCourse = async(code: string) => {
 //   return (await loadCourses()).find(course => course.code == code)
 // }
-

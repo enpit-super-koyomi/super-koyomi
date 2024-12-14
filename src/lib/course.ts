@@ -51,6 +51,12 @@ const getCurrentModule = () => {
   return "秋B"
 }
 
+/**
+ * 科目について、ある時刻以降の授業時間帯をすべて取得する。
+ * @param baseDate - 基準日時。これ以降の授業時間帯を取得する
+ * @param course - 科目データ
+ * @returns 授業時間帯（開始・終了時刻の組）の配列
+ */
 export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
   const currentModule = getCurrentModule()
   const currentSchedules = course.schedules

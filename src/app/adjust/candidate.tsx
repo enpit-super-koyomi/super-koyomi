@@ -18,6 +18,7 @@ type Props = {
   selectedUserIds: string[];
   excludePeriod: ExcludePeriod;
   selectedDurationMinute: number;
+  /** 履修中の講義一覧 */
   courses: Course[];
 };
 
@@ -36,6 +37,7 @@ export default function Candidate(props: Props) {
   async function handleSchedule() {
     setIsButtonActive(false);
     try {
+      // 科目に対する授業時間の配列を求める
       const classPeriods: Period[] = props.courses
         .map((course) => {
           const periods = courseToPeriods(new Date(), course);
@@ -116,7 +118,7 @@ export default function Candidate(props: Props) {
         message="Are you sure you want to add this event to your calendar?"
         ref={yesNoDialogRef}
         onYes={() => handleDialogConfirm()}
-        onNo={() => {}}
+        onNo={() => { }}
       />
       <Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
         「{props.title || "-"}」の日時候補を探す
