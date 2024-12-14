@@ -7,20 +7,27 @@ export type CoursePeriod = {
 	periods: Period[]
 }
 
-export const courseDays: Day[] = [Day.Sun, Day.Mon, Day.Tue, Day.Wed, Day.Thu, Day.Fri, Day.Sat]
+/** 日月火水木金土 */
+export const DAY_OF_WEEKS = [Day.Sun, Day.Mon, Day.Tue, Day.Wed, Day.Thu, Day.Fri, Day.Sat] as const
 
+/**
+ * 基準の日時と科目の曜日情報とから、次の授業の日時を求めます。
+ * @param currentDate - 基準日時
+ * @param day - 科目の曜日
+ * @returns 次回授業の日時。曜日が「随時」などで確定できない場合は undefined
+ */
 const nextDateOfDay = (currentDate: Date, day: Day) => {
-	if (
-		day === Day.Intensive ||
-		day === Day.Appointment ||
-		day === Day.AnyTime ||
-		day === Day.Unknown
-	) {
-		console.log("Day exception")
-		return undefined
-	}
+	// if (
+	// 	day === Day.Intensive ||
+	// 	day === Day.Appointment ||
+	// 	day === Day.AnyTime ||
+	// 	day === Day.Unknown
+	// ) {
+	// 	console.log("Day exception")
+	// 	return undefined
+	// }
 
-	const i = courseDays.findIndex(v => v == day)
+	const i = DAY_OF_WEEKS.findIndex(v => v == day)
 	if (i < 0) return undefined
 	const j = currentDate.getDay()
 	const date = new Date(currentDate)
@@ -29,14 +36,27 @@ const nextDateOfDay = (currentDate: Date, day: Day) => {
 	return date
 }
 
-const classStartTimes: [number, number][] = [
+/// TEST
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function nextDateOfDay_spec() {
+	const baseDate = new Date(2024, 11, 3) // 2024-12-03 Tuesday
+	const dayOfWeeks = [Day.Wed, Day.Tue, Day.Mon, Day.AnyTime] as const
+	const expected = [new Date(2024, 11, 4), new Date(2024, 11, 3), new Date(2024, 11, 9), undefined] as const
+	const actual = dayOfWeeks.map(d => nextDateOfDay(baseDate, d))
+	actual.forEach((_, i) => { if (expected[i]?.toDateString() !== actual[i]?.toDateString()) throw new Error(`Test failed, actual=${actual[i]} != expected=${expected[i]}`) })
+	console.debug("nextDateOfDay_spec() is OK")
+}
+// nextDateOfDay_spec()
+/// TEST END
+
+const CLASS_START_TIMES = [
 	[8, 40],
 	[10, 10],
 	[12, 15],
 	[13, 45],
 	[15, 15],
 	[16, 45],
-]
+] as const
 
 const classLengthMinutes: number = 75
 type CourseSchedule = Course["schedules"][0]
@@ -46,9 +66,12 @@ const isNextSchedule = (prevSchedule: CourseSchedule, schedule: CourseSchedule) 
 	prevSchedule.day == schedule.day &&
 	prevSchedule.period + 1 == schedule.period
 
-// todo
+/**
+ * 現在（or与えられた日時が？）どのモジュール期間であるかを返します。
+ * @todo
+ */
 const getCurrentModule = () => {
-  return "秋B"
+	return "秋B"
 }
 
 /**
@@ -58,26 +81,26 @@ const getCurrentModule = () => {
  * @returns 授業時間帯（開始・終了時刻の組）の配列
  */
 export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
-  const currentModule = getCurrentModule()
-  const currentSchedules = course.schedules
-    .filter(s => s.module == currentModule)
+	const currentModule = getCurrentModule()
+	const currentSchedules = course.schedules
+		.filter(s => s.module == currentModule)
 	const periods = currentSchedules
 		.flatMap(s => {
-			const date = nextDateOfDay(baseDate, s.day)
-			if (date == undefined) {
+			const nextClassDate = nextDateOfDay(baseDate, s.day)
+			if (nextClassDate == undefined) {
 				console.log("s:", s)
 				console.log(`nextDateOfDay(${baseDate.toISOString()}, ${s.day}) == undefined`)
 				return []
 			}
 
-			const startTime = classStartTimes.at(s.period -1)
+			const startTime = CLASS_START_TIMES.at(s.period - 1)
 			if (startTime == undefined) {
 				console.log("s:", s)
 				console.log(`classStartTimes.at(s.period)==undefined`)
 				return []
 			}
 			const [hh, mm] = startTime
-			const start = setTimes(date)(hh, mm)
+			const start = setTimes(nextClassDate)(hh, mm)
 			const end = new Date(start)
 			end.setMinutes(end.getMinutes() + classLengthMinutes)
 
@@ -85,14 +108,14 @@ export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
 		})
 		.filter(date => date != undefined)
 
-  // 連続するnコマを一つの period にまとめる
+	// 連続するnコマを一つの period にまとめる
 
-	const {p: [periodss, lastPeriods]} = periods.reduce(
-		({lastSchedule, p: [periodss, periods]}, period, i) => {
+	const { p: [periodss, lastPeriods] } = periods.reduce(
+		({ lastSchedule, p: [periodss, periods] }, period, i) => {
 			const schedule = currentSchedules[i]
 			return (lastSchedule ? isNextSchedule(lastSchedule, schedule) : true)
-				? { lastSchedule: schedule, p: [periodss, [...periods, period]]}
-				: { lastSchedule: schedule, p: [[...periodss, periods], [period]]}
+				? { lastSchedule: schedule, p: [periodss, [...periods, period]] }
+				: { lastSchedule: schedule, p: [[...periodss, periods], [period]] }
 		},
 		{ lastSchedule: undefined, p: [[], []] } as { lastSchedule: CourseSchedule | undefined, p: [Period[][], Period[]] }
 	)
@@ -101,11 +124,11 @@ export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
 		periods.length == 0
 			? []
 			: [
-					{
-						start: periods[0].start,
-						end: periods[periods.length - 1].end,
-					},
-			  ]
+				{
+					start: periods[0].start,
+					end: periods[periods.length - 1].end,
+				},
+			]
 	)
 }
 

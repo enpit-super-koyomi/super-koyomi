@@ -8,5 +8,5 @@ export default async function AdjustPage() {
   const users = (await db.allUsers())
     .filter(user => user.email !== session?.user.email);
 
-  return <SchedulePlanner users={users} session={session ?? undefined} />
+  return <SchedulePlanner users={users} isSignedIn={!!session} />
 }
