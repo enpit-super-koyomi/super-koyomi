@@ -17,7 +17,6 @@ export const DAY_OF_WEEKS = [Day.Sun, Day.Mon, Day.Tue, Day.Wed, Day.Thu, Day.Fr
  * @returns 次回授業の日時。曜日が「随時」などで確定できない場合は undefined
  */
 const nextDateOfDay = (currentDate: Date, day: Day) => {
-
 	const i = DAY_OF_WEEKS.findIndex(v => v == day)
 	if (i < 0) return undefined
 	const j = currentDate.getDay()
@@ -27,6 +26,18 @@ const nextDateOfDay = (currentDate: Date, day: Day) => {
 	return date
 }
 
+/// TEST
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function nextDateOfDay_spec() {
+	const baseDate = new Date(2024, 11, 3) // 2024-12-03 Tuesday
+	const dayOfWeeks = [Day.Wed, Day.Tue, Day.Mon, Day.AnyTime] as const
+	const expected = [new Date(2024, 11, 4), new Date(2024, 11, 3), new Date(2024, 11, 9), undefined] as const
+	const actual = dayOfWeeks.map(d => nextDateOfDay(baseDate, d))
+	actual.forEach((_, i) => { if (expected[i]?.toDateString() !== actual[i]?.toDateString()) throw new Error(`Test failed, actual=${actual[i]} != expected=${expected[i]}`) })
+	console.debug("nextDateOfDay_spec() is OK")
+}
+// nextDateOfDay_spec()
+/// TEST END
 
 const CLASS_START_TIMES = [
 	[8, 40],
@@ -89,12 +100,12 @@ export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
 
 	// 連続するnコマを一つの period にまとめる
 
-	const {p: [periodss, lastPeriods]} = periods.reduce(
-		({lastSchedule, p: [periodss, periods]}, period, i) => {
+	const { p: [periodss, lastPeriods] } = periods.reduce(
+		({ lastSchedule, p: [periodss, periods] }, period, i) => {
 			const schedule = currentSchedules[i]
 			return (lastSchedule ? isNextSchedule(lastSchedule, schedule) : true)
-				? { lastSchedule: schedule, p: [periodss, [...periods, period]]}
-				: { lastSchedule: schedule, p: [[...periodss, periods], [period]]}
+				? { lastSchedule: schedule, p: [periodss, [...periods, period]] }
+				: { lastSchedule: schedule, p: [[...periodss, periods], [period]] }
 		},
 		{ lastSchedule: undefined, p: [[], []] } as { lastSchedule: CourseSchedule | undefined, p: [Period[][], Period[]] }
 	)
