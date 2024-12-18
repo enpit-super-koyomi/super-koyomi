@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState, useRef, useCallback } from "react"
-import { formatTime, getEventPosition, getTimeFromPosition } from "../../lib/draft/utils"
+import React, { useState, useRef, useCallback, useEffect } from "react"
+import { HoursMinutes, formatTime, getEventPosition, getTimeFromPosition, roundTime } from "../../lib/draft/utils"
 import { Period } from "@/lib/scheduling"
 import { CoursePeriod, courseToPeriods } from "@/lib/course"
 import { Course } from "@/third-party/twinte-parser-type"
 import { TimeSelectionModal } from "@/components/TimeSelectionModal"
 import { ConfirmationPopup } from "@/components/ConfirmationPopup"
+import { setTimes, truncateTime } from "@/lib/utils"
 
 type WeekViewProps = {
   periods: Period[]
@@ -15,6 +16,8 @@ type WeekViewProps = {
   isButtonActive: boolean
   courses: Course[]
   onAddPeriod: (newPeriod: Period) => void
+	selectedDurationMinutes: number,
+	selectedPeriodState: [Period|null, React.Dispatch<Period|null>],
 }
 
 const handleClassClick = (courseWithPeriod: CourseWithPeriod) => {
@@ -29,10 +32,12 @@ type CourseWithPeriod = {
 export function WeekView({
   periods,
   currentDate,
-  handlePeriodClick,
+  // handlePeriodClick,
+	selectedPeriodState,
   isButtonActive,
   courses,
   onAddPeriod,
+	selectedDurationMinutes
 }: WeekViewProps) {
   const weekDates = Array.from(Array(7).keys()).map(i => {
     const date = new Date(currentDate)
@@ -46,21 +51,41 @@ export function WeekView({
     periods: courseToPeriods(currentDate, course),
   }))
 
+	// const [selectedSlot, setSelectedSlot] = useState<Period|null>(null)
+	const [selectedPeriod, setSelectedPeriod] = selectedPeriodState
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedPosition, setSelectedPosition] = useState<{ x: number; y: number } | null>(null)
-  const [initialStartTime, setInitialStartTime] = useState<Date | null>(null)
-  const [initialEndTime, setInitialEndTime] = useState<Date | null>(null)
+  const [clickedTime, setClickedTime] = useState<{ hours: number; minutes: number } | null>(null)
+
+	const initialEnd = new Date()
+	initialEnd.setMinutes(initialEnd.getMinutes() + selectedDurationMinutes)
+	const [initialPeriod, setInitialPeriod] = useState<Period>({
+		start: new Date(),
+		end: initialEnd
+	})
 
   const longPressTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isLongPressRef = useRef(false)
+	const dateRef = useRef<HTMLDivElement>(null)
 
-  const handleDateClick = useCallback((date: Date, event: React.MouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect()
-    const y = event.clientY - rect.top
-    const totalHeight = rect.height
+	useEffect(() => {
+		console.log("initialPeriod", initialPeriod)
+
+	}, [initialPeriod])
+
+  const handleFreePeriodClick = (period: Period, event: React.MouseEvent<HTMLButtonElement>) => {
+		setSelectedPeriod(period)
+    const rect = dateRef.current?.getBoundingClientRect()
+    const y = event.clientY - (rect?.top ?? 0)
+    const totalHeight = rect?.height ?? 0
     const clickedTime = getTimeFromPosition(y, totalHeight)
+		setClickedTime(clickedTime)
+
+		console.log (clickedTime)
+
+		const date = truncateTime(period.start)
 
     if (isLongPressRef.current) {
       // 長押しの場合、モーダルを表示
@@ -69,19 +94,43 @@ export function WeekView({
       setIsModalOpen(true)
     } else {
       // 通常のクリックの場合、確認ポップアップを表示
-      const startTime = new Date(date)
-      startTime.setHours(clickedTime.hours, clickedTime.minutes, 0, 0)
+			const clickedTimeRounded = roundTime(clickedTime)
+      const startTime = setTimes(date)(clickedTimeRounded.hours, clickedTimeRounded.minutes)
       const endTime = new Date(startTime)
-      endTime.setMinutes(endTime.getMinutes() + 30)
+      endTime.setMinutes(endTime.getMinutes() + selectedDurationMinutes)
 
       setSelectedDate(date)
-      setInitialStartTime(startTime)
-      setInitialEndTime(endTime)
+      setInitialPeriod(() => ({start: startTime, end: endTime}))
       setIsConfirmationOpen(true)
     }
-  }, [])
+  }
+  // const handleDateClick = (date: Date, event: React.MouseEvent<HTMLDivElement>) => {
+  //   const rect = event.currentTarget.getBoundingClientRect()
+  //   const y = event.clientY - rect.top
+  //   const totalHeight = rect.height
+  //   const clickedTime = getTimeFromPosition(y, totalHeight)
+	// 	setClickedTime(clickedTime)
 
-  const handleMouseDown = useCallback((date: Date, event: React.MouseEvent<HTMLDivElement>) => {
+	// 	console.log(clickedTime)
+  //   if (isLongPressRef.current) {
+  //     // 長押しの場合、モーダルを表示
+  //     setSelectedDate(date)
+  //     setSelectedPosition({ x: event.clientX, y: event.clientY })
+  //     setIsModalOpen(true)
+  //   } else {
+  //     // 通常のクリックの場合、確認ポップアップを表示
+	// 		const clickedTimeRounded = roundTime(clickedTime)
+  //     const startTime = setTimes(date)(clickedTimeRounded.hours, clickedTimeRounded.minutes)
+  //     const endTime = new Date(startTime)
+  //     endTime.setMinutes(endTime.getMinutes() + selectedDurationMinutes)
+
+  //     setSelectedDate(date)
+  //     setInitialPeriod(() => ({start: startTime, end: endTime}))
+  //     setIsConfirmationOpen(true)
+  //   }
+  // }
+
+  const handleMouseDown = useCallback(() => {
     isLongPressRef.current = false
     longPressTimeoutRef.current = setTimeout(() => {
       isLongPressRef.current = true
@@ -94,22 +143,23 @@ export function WeekView({
     }
   }, [])
 
-  const handleTimeSelect = (time: string) => {
+  const handleTimeSelect = ({hours, minutes}: HoursMinutes) => {
     if (selectedDate) {
-      const [hours, minutes] = time.split(':').map(Number)
       const startTime = new Date(selectedDate)
       startTime.setHours(hours, minutes, 0, 0)
       const endTime = new Date(startTime)
-      endTime.setMinutes(endTime.getMinutes() + 30)
+      endTime.setMinutes(endTime.getMinutes() + selectedDurationMinutes)
 
-      setInitialStartTime(startTime)
-      setInitialEndTime(endTime)
+      setInitialPeriod({
+				start: startTime,
+				end: endTime
+			})
       setIsModalOpen(false)
       setIsConfirmationOpen(true)
     }
   }
 
-  const handleConfirm = (startTime: Date, endTime: Date) => {
+  const handleConfirm = ({start: startTime, end: endTime}: Period) => {
     onAddPeriod({ start: startTime, end: endTime })
     setIsConfirmationOpen(false)
   }
@@ -145,8 +195,9 @@ export function WeekView({
           <div
             key={date.toISOString()}
             className="relative bg-white"
-            onClick={(e) => handleDateClick(date, e)}
-            onMouseDown={(e) => handleMouseDown(date, e)}
+            // onClick={(e) => handleDateClick(date, e)}
+						ref={dateRef}
+            onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp} >
           	{hours.map(hour => (
@@ -174,9 +225,10 @@ export function WeekView({
                         borderColor: "#f0be5c",
                         color: "black",
                       }}
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation()
-                        handlePeriodClick(period)
+                        // dateRef.current?.click()
+                        handleFreePeriodClick(period, e)
                       }}
 											>
                       <div>
@@ -232,13 +284,15 @@ export function WeekView({
         onSelectTime={handleTimeSelect}
         date={selectedDate || new Date()}
         position={selectedPosition}
+				clickedTime={clickedTime}
       />
       <ConfirmationPopup
+				initialDurationMinutes={selectedDurationMinutes}
         isOpen={isConfirmationOpen}
+				initialPeriod={initialPeriod}
         onClose={() => setIsConfirmationOpen(false)}
         onConfirm={handleConfirm}
-        initialStartTime={initialStartTime || new Date()}
-        initialEndTime={initialEndTime || new Date()}
+				range={selectedPeriod}
       />
     </div>
   )
