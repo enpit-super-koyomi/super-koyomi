@@ -3,6 +3,8 @@
 import { getGuestsEvents, getHostEvents } from "@/lib/getEvents";
 import { excludePeriodOfOffsetDays } from "./utils";
 
+const DURATION_STEP_MILLISEC= 30*60e3;
+
 export type Period = {
   start: Date,
   end: Date
@@ -79,7 +81,14 @@ export async function findFreePeriods(eventDurationMinute: number, eventsOfUsers
       freeDateEnd = change.timestamp;
 
       if (freeDateEnd.getTime() - freeDateStart.getTime() >= eventDuration && new Date() <= freeDateStart) {
-        candidate.push({start: freeDateStart, end: freeDateEnd});
+        for (let i = 0; true; i++) {
+          const startTimeMillisec = freeDateStart.getTime() + i * DURATION_STEP_MILLISEC
+          if (startTimeMillisec + eventDuration <= freeDateEnd.getTime()) {
+            candidate.push({ start: new Date(startTimeMillisec), end: new Date(startTimeMillisec + eventDuration) });
+          } else {
+            break;
+          }
+        }
       }
     }
 
