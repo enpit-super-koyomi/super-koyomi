@@ -21,13 +21,21 @@ export const dateToGCalFormat = (date: Date): string =>
 export const truncateTime = (date: Date): Date =>
 	new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
-export const setTimes = (baseDate: Date) => (hours: number, minutes?: number, seconds?: number, miliseconds?: number): Date => {
-	const date = truncateTime(baseDate)
-	date.setHours(hours)
-	if (minutes) date.setMinutes(minutes)
-	if (seconds) date.setSeconds(seconds)
-	if (miliseconds) date.setMilliseconds(miliseconds)
-	return date
+/**
+ * 基準日を受け取り、基準日と授業開始時刻から開始日時を求める関数を作ります。
+ * @param baseDate - 基準日
+ * @returns 開始日時を求める関数
+ * @todo 名前がよくない
+ */
+export function setTimes(baseDate: Date) {
+	return (hours: number, minutes?: number, seconds?: number, miliseconds?: number): Date => {
+		const date = truncateTime(baseDate)
+		date.setHours(hours)
+		if (minutes) date.setMinutes(minutes)
+		if (seconds) date.setSeconds(seconds)
+		if (miliseconds) date.setMilliseconds(miliseconds)
+		return date
+	}
 }
 
 export const excludePeriodOfOffsetDays = (
@@ -68,17 +76,17 @@ export const formatDuration = (minutes: number) => {
 export const formatDate = (date: Date): string => {
 	// Convert to a user-friendly string
 	const formattedDate = date.toLocaleString('ja-JP', {
-    year: 'numeric',
-    month: 'long', // 'short' for abbreviated month names
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    // second: '2-digit',
-    // timeZoneName: 'short' // Shows the time zone
+		year: 'numeric',
+		month: 'long', // 'short' for abbreviated month names
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		// second: '2-digit',
+		// timeZoneName: 'short' // Shows the time zone
 	});
 
 	return formattedDate
 }
 
-export const max = (a: number, b: number | undefined | null) => (b ? (a < b ? b : a) : a)
-export const min = (a: number, b: number | undefined | null) => (b ? (a > b ? b : a) : a)
+// export const max = (a: number, b: number | undefined | null) => (b ? (a < b ? b : a) : a)
+// export const min = (a: number, b: number | undefined | null) => (b ? (a > b ? b : a) : a)
