@@ -89,14 +89,14 @@ export function WeekView({
 										<button
 											key={period.start.toString()}
 											disabled={!isButtonActive}
-											className={`absolute w-full px-1 py-1 text-xs border rounded overflow-hidden transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
+											className={`absolute w-full px-1 py-1 text-xs border rounded overflow-hidden transition-opacity hover:opacity-100 opacity-50 text-transparent hover:text-black z-0 hover:z-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
 											style={{
 												top: `${top}%`,
 												height: `${height}%`,
 												minHeight: "20px",
 												backgroundColor: `#f0be5c`, //lightsteelblue#b0c4de
 												borderColor: "#f0be5c", //lightsteelblue
-												color: "black",
+												// color: "black",
 											}}
 											onClick={() => handlePeriodClick(period)}>
 											<div>
