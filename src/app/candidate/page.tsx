@@ -1,9 +1,16 @@
 "use client"
 
-import React from 'react'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import React from "react"
+import { format } from "date-fns"
+import { ja } from "date-fns/locale"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface TimeSlot {
@@ -37,19 +44,19 @@ const scheduleData: DaySchedule[] = [
 
 export default function ScheduleTable() {
   const calculateDuration = (start: string, end: string) => {
-    const [startHour, startMinute] = start.split(':').map(Number)
-    const [endHour, endMinute] = end.split(':').map(Number)
-    const durationInMinutes = (endHour * 60 + endMinute) - (startHour * 60 + startMinute)
-    return `${Math.floor(durationInMinutes / 60)}:${(durationInMinutes % 60).toString().padStart(2, '0')}`
+    const [startHour, startMinute] = start.split(":").map(Number)
+    const [endHour, endMinute] = end.split(":").map(Number)
+    const durationInMinutes = endHour * 60 + endMinute - (startHour * 60 + startMinute)
+    return `${Math.floor(durationInMinutes / 60)}:${(durationInMinutes % 60).toString().padStart(2, "0")}`
   }
 
   return (
     <div className="container mx-auto p-4">
       細川
-      {scheduleData.map((day) => (
+      {scheduleData.map(day => (
         <Card key={day.date.toISOString()} className="mb-6">
           <CardHeader>
-            <CardTitle>{format(day.date, 'yyyy/M/d (E)', { locale: ja })}</CardTitle>
+            <CardTitle>{format(day.date, "yyyy/M/d (E)", { locale: ja })}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -62,7 +69,7 @@ export default function ScheduleTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {day.timeSlots.map((slot) => (
+                  {day.timeSlots.map(slot => (
                     <TableRow key={`${slot.start}-${slot.end}`}>
                       <TableCell className="text-left whitespace-nowrap">
                         {slot.start} - {slot.end}

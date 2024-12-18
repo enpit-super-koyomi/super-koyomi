@@ -1,8 +1,8 @@
-const clientId = process.env.GOOGLE_CLIENT_ID!;
-if (!clientId) throw new Error("Missing GOOGLE_CLIENT_ID env var");
+const clientId = process.env.GOOGLE_CLIENT_ID!
+if (!clientId) throw new Error("Missing GOOGLE_CLIENT_ID env var")
 
-const clientSecret = process.env.GOOGLE_CLIENT_SECRET!;
-if (!clientSecret) throw new Error("Missing GOOGLE_CLIENT_SECRET env var");
+const clientSecret = process.env.GOOGLE_CLIENT_SECRET!
+if (!clientSecret) throw new Error("Missing GOOGLE_CLIENT_SECRET env var")
 
 export const SCOPE = [
   "https://www.googleapis.com/auth/userinfo.profile",
@@ -11,7 +11,6 @@ export const SCOPE = [
   "https://www.googleapis.com/auth/calendar.app.created",
   "https://www.googleapis.com/auth/calendar.freebusy",
   "https://www.googleapis.com/auth/calendar.calendarlist.readonly",
-];
+]
 
-export { clientId as googleClientId, clientSecret as googleClientSecret };
-
+export { clientId as googleClientId, clientSecret as googleClientSecret }

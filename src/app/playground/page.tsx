@@ -1,14 +1,14 @@
-import ImportFile from "@/components/ImportFile";
-import { fetchCourses } from "@/third-party/twinte-parser";
+import ImportFile from "@/components/ImportFile"
+import { fetchCourses } from "@/third-party/twinte-parser"
 
 export default async function PlayGround() {
   const allCourses = await fetchCourses()
 
-  return(
+  return (
     <div
       className="p-10" // header に隠れないよう
     >
-      <ImportFile allCourses={allCourses}/>
+      <ImportFile allCourses={allCourses} />
     </div>
   )
 }

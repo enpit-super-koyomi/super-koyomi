@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { signIn, signOut } from "next-auth/react";
-import Image from "next/image";
+import { Button } from "@/components/ui/button"
+import { signIn, signOut } from "next-auth/react"
+import Image from "next/image"
 
-const DEFAULT_IMAGE = "/images/default.png";
+const DEFAULT_IMAGE = "/images/default.png"
 
 export const UserWidget = ({
   signin,
   name,
   picture,
 }: {
-  signin: boolean;
-  name: string | undefined;
-  picture: string | undefined;
+  signin: boolean
+  name: string | undefined
+  picture: string | undefined
 }) => {
   return (
     <div>
@@ -35,5 +35,5 @@ export const UserWidget = ({
         <Button onClick={async () => await signIn()}>サインイン</Button>
       )}
     </div>
-  );
-};
+  )
+}
