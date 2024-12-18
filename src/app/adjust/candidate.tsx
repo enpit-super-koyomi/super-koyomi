@@ -132,6 +132,11 @@ export default function Candidate(props: Props) {
             isButtonActive={isButtonActive}
             courses={props.courses}
             onAddPeriod={addConfirmedPeriodToCalendar}
+            selectedDurationMinutes={props.selectedDurationMinute}
+            selectedPeriodState={[
+              selectedPeriod,
+              setSelectedPeriod
+            ]}
           />
         ) : (
           ""
