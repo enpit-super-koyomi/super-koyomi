@@ -52,7 +52,7 @@ export function WeekView({
 					<div
 						key={date.toISOString()}
 						className="text-center text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 font-semibold bg-white">
-						{date.toLocaleDateString("ja-JP", {
+						{date.toLocaleDateString("ja-JP", { //日時
 							weekday: "short",
 							month: "numeric",
 							day: "numeric",
@@ -60,7 +60,8 @@ export function WeekView({
 					</div>
 				))}
 			</div>
-			<div className="relative grid grid-cols-8 gap-px bg-gray-200" style={{ height: "1440px" }}>
+			<div className="relative grid grid-cols-8 gap-px bg-gray-200" style={{ height: "1440px" }}> 
+        {/* ↑縦線のスタイル */}
 				<div className="sticky left-0 bg-white ">
 					{hours.map(hour => (
 						<div
@@ -72,6 +73,13 @@ export function WeekView({
 				</div>
 				{weekDates.map(date => (
 					<div key={date.toISOString()} className="relative bg-white">
+						{hours.map(hour => (
+							<div
+								key={`${date.toISOString()}-${hour}`}
+								className="absolute top-0 w-full h-[60px] border-t border-gray-100"
+								style={{ top: `${hour * 60}px` }} // 1時間ごとに線を描画
+							></div>
+						))}
 						{[
 							...periods
 								.filter(period => period.start.toDateString() === date.toDateString())
@@ -121,13 +129,13 @@ export function WeekView({
 												borderColor: "black", //lightsteelblue
 												borderWidth: "3px",
 												// border: "dot 5px black",
-												color: "black",
+												//color: "black", //文字？
 											}}
 											onClick={() => handleClassClick({ course, period })}>
 											<div>
 												<div>{course.name}</div>
 												<div>
-													{formatTime(period.start)} {formatTime(period.end)}
+                          {/* {formatTime(period.start)} {formatTime(period.end)} //時間割の時間の表示 */ } 
 												</div>
 											</div>
 										</button>
