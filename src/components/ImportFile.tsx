@@ -3,10 +3,19 @@
 import { useCallback, useEffect, useState } from "react"
 import { Course } from "@/third-party/twinte-parser-type"
 
+/**
+ * 履修中の科目一覧データを科目番号の配列に変換します。
+ * @param content - TWINSでエクスポートされた履修科目一覧
+ * @returns 科目番号の配列
+ */
 const parseRSReferToCodes = (content: string): string[] =>
 	content.split("\n").map(line => line.replaceAll(/["\s\r]/gi, ""))
 
-
+/**
+ * ファイル読み込みフォーム。
+ * @param props.allCourses - 開講される全科目のデータ
+ * @returns ファイル読み込みフォーム
+ */
 export default function ImportFile({ allCourses }: { allCourses: Course[] }) {
 	const [name, setName] = useState<string>()
 	const [contents, setContents] = useState<string>()

@@ -23,6 +23,11 @@ type CourseWithPeriod = {
 	period: Period
 }
 
+/**
+ * 日時候補のカレンダー表示を提供します。
+ * @param props - 各種プロパティ
+ * @returns カレンダー表示のDOM要素
+ */
 export function WeekView({
 	periods,
 	currentDate,
@@ -44,6 +49,7 @@ export function WeekView({
 
 	console.log("coursePeriods:", coursePeriods)
 
+	/** @todo Reduce this TOO DEEP nest */
 	return (
 		<div className="max-w-full overflow-x-auto">
 			<div className="grid grid-cols-8 gap-px bg-gray-200">

@@ -20,7 +20,6 @@ import { formatDuration } from "@/lib/utils"
 import Candidate from "./candidate"
 import { Course } from "@/third-party/twinte-parser-type"
 import ImportFileButton from "@/components/ImportFileButton"
-import { Session } from "next-auth"
 
 // const people = [
 // 	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
@@ -31,7 +30,8 @@ import { Session } from "next-auth"
 // 	{ id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
 // ]
 
-export default function SchedulePlanner({ session, users }: { session?: Session; users: User[] }) {
+export default function SchedulePlanner(props: { isSignedIn: boolean; users: User[] }) {
+	const { isSignedIn, users } = props;
 	const [title, setTitle] = useState("")
 	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
 	const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
@@ -60,9 +60,9 @@ export default function SchedulePlanner({ session, users }: { session?: Session;
 					<Label htmlFor="exclusion-select">除外時間帯</Label>
 					<div className="flex">
 						<Exclusion dispatch={setExcludePeriod} defaultValue={excludePeriod} />
-						{session ? (
+						{isSignedIn ? (
 							<div className="pl-8">
-								<ImportFile setCourses={setCourses} />
+								<ImportFileButton setCourses={setCourses} />
 							</div>
 						) : (
 							""
@@ -205,12 +205,4 @@ function Exclusion({
 			</div>
 		</div>
 	)
-}
-
-type Prop = {
-	setCourses: React.Dispatch<Course[]>
-}
-
-function ImportFile(prop: Prop) {
-	return <ImportFileButton {...prop} />
 }

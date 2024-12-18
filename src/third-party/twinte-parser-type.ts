@@ -1,3 +1,6 @@
+/**
+ * 各科目のデータ
+ */
 export interface Course {
     code: string;
     name: string;
@@ -7,8 +10,11 @@ export interface Course {
     type: number;
     recommendedGrade: number[];
     schedules: {
+        /** モジュール（春A～秋Cなど） */
         module: Module;
+        /** 曜日（月～金など） */
         day: Day;
+        /** 時限？ */
         period: number;
         room: string;
     }[];
