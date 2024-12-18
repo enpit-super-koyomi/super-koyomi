@@ -35,4 +35,4 @@ export const DEFAULT_EVENT = {
   summary: "タイトルなし",
   start: new Date(),
   end: new Date(),
-}
+};
