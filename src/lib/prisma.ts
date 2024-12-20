@@ -9,11 +9,11 @@ export const db = {
     const account = await prisma.account.findFirst({
       where: { userId },
     });
-    return account;
+    return account
   },
 
-  allUsers: async (): Promise<User[]> => {
+  allUsers: async (): Promise<User[]>=>{
     const users = await prisma.user.findMany();
-    return users;
-  },
+    return users
+  }
 };

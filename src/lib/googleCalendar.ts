@@ -23,7 +23,7 @@ export class GoogleCalendar implements Calendar {
   async getEvents(): Promise<CalEvent[]> {
     const { data: calendars } = await this.client.calendarList.list();
     const primaryCalendarId = calendars.items?.find(
-      (calendar) => calendar.primary,
+      (calendar) => calendar.primary
     )?.id;
     if (!primaryCalendarId) {
       throw new Error("Primary calendar not found");
@@ -61,7 +61,7 @@ export class GoogleCalendar implements Calendar {
   async getBusyPeriods(): Promise<SlimedCalEvent[]> {
     const { data: calendars } = await this.client.calendarList.list();
     const primaryCalendarId = calendars.items?.find(
-      (calendar) => calendar.primary,
+      (calendar) => calendar.primary
     )?.id;
     if (!primaryCalendarId) {
       throw new Error("Primary calendar not found");
@@ -97,7 +97,7 @@ export class GoogleCalendar implements Calendar {
   async addEvent(event: CalEvent): Promise<CalEvent> {
     const { data: calendars } = await this.client.calendarList.list();
     let superKoyomiCalendarId = calendars.items?.find(
-      (calendar) => calendar.summary === SUPER_KOYOMI_CALENDAR_NAME,
+      (calendar) => calendar.summary === SUPER_KOYOMI_CALENDAR_NAME
     )?.id;
 
     if (!superKoyomiCalendarId) {

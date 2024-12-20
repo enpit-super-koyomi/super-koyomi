@@ -21,6 +21,6 @@ export const YesNoDialog = forwardRef<HTMLDialogElement, YesNoDialogOptions>(
         </form>
       </dialog>
     );
-  },
+  }
 );
 YesNoDialog.displayName = "YesNoDialog";
