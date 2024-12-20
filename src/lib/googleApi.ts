@@ -14,3 +14,4 @@ export const SCOPE = [
 ];
 
 export { clientId as googleClientId, clientSecret as googleClientSecret };
+

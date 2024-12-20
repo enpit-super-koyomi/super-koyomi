@@ -1,22 +1,14 @@
-import { setTimes } from "./utils";
-import { Period } from "./scheduling";
-import { Course, Day } from "@/third-party/twinte-parser-type";
+import { setTimes } from "./utils"
+import { Period } from "./scheduling"
+import { Course, Day } from "@/third-party/twinte-parser-type"
 
 export type CoursePeriod = {
-  course: Course;
-  periods: Period[];
-};
+	course: Course
+	periods: Period[]
+}
 
 /** 日月火水木金土 */
-export const DAY_OF_WEEKS = [
-  Day.Sun,
-  Day.Mon,
-  Day.Tue,
-  Day.Wed,
-  Day.Thu,
-  Day.Fri,
-  Day.Sat,
-] as const;
+export const DAY_OF_WEEKS = [Day.Sun, Day.Mon, Day.Tue, Day.Wed, Day.Thu, Day.Fri, Day.Sat] as const
 
 /**
  * 基準の日時と科目の曜日情報とから、次の授業の日時を求めます。
@@ -25,75 +17,62 @@ export const DAY_OF_WEEKS = [
  * @returns 次回授業の日時。曜日が「随時」などで確定できない場合は undefined
  */
 const nextDateOfDay = (currentDate: Date, day: Day) => {
-  // if (
-  // 	day === Day.Intensive ||
-  // 	day === Day.Appointment ||
-  // 	day === Day.AnyTime ||
-  // 	day === Day.Unknown
-  // ) {
-  // 	console.log("Day exception")
-  // 	return undefined
-  // }
+	// if (
+	// 	day === Day.Intensive ||
+	// 	day === Day.Appointment ||
+	// 	day === Day.AnyTime ||
+	// 	day === Day.Unknown
+	// ) {
+	// 	console.log("Day exception")
+	// 	return undefined
+	// }
 
-  const i = DAY_OF_WEEKS.findIndex((v) => v == day);
-  if (i < 0) return undefined;
-  const j = currentDate.getDay();
-  const date = new Date(currentDate);
-  const offset = i - j; // 0 <= i,j <= 6
-  date.setDate(date.getDate() + (offset < 0 ? offset + 7 : offset)); // mod offset 7 を基準日に足す
-  return date;
-};
+	const i = DAY_OF_WEEKS.findIndex(v => v == day)
+	if (i < 0) return undefined
+	const j = currentDate.getDay()
+	const date = new Date(currentDate)
+	const offset = i - j // 0 <= i,j <= 6
+	date.setDate(date.getDate() + (offset < 0 ? offset + 7 : offset)) // mod offset 7 を基準日に足す
+	return date
+}
 
 /// TEST
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function nextDateOfDay_spec() {
-  const baseDate = new Date(2024, 11, 3); // 2024-12-03 Tuesday
-  const dayOfWeeks = [Day.Wed, Day.Tue, Day.Mon, Day.AnyTime] as const;
-  const expected = [
-    new Date(2024, 11, 4),
-    new Date(2024, 11, 3),
-    new Date(2024, 11, 9),
-    undefined,
-  ] as const;
-  const actual = dayOfWeeks.map((d) => nextDateOfDay(baseDate, d));
-  actual.forEach((_, i) => {
-    if (expected[i]?.toDateString() !== actual[i]?.toDateString())
-      throw new Error(
-        `Test failed, actual=${actual[i]} != expected=${expected[i]}`,
-      );
-  });
-  console.debug("nextDateOfDay_spec() is OK");
+	const baseDate = new Date(2024, 11, 3) // 2024-12-03 Tuesday
+	const dayOfWeeks = [Day.Wed, Day.Tue, Day.Mon, Day.AnyTime] as const
+	const expected = [new Date(2024, 11, 4), new Date(2024, 11, 3), new Date(2024, 11, 9), undefined] as const
+	const actual = dayOfWeeks.map(d => nextDateOfDay(baseDate, d))
+	actual.forEach((_, i) => { if (expected[i]?.toDateString() !== actual[i]?.toDateString()) throw new Error(`Test failed, actual=${actual[i]} != expected=${expected[i]}`) })
+	console.debug("nextDateOfDay_spec() is OK")
 }
 // nextDateOfDay_spec()
 /// TEST END
 
 const CLASS_START_TIMES = [
-  [8, 40],
-  [10, 10],
-  [12, 15],
-  [13, 45],
-  [15, 15],
-  [16, 45],
-] as const;
+	[8, 40],
+	[10, 10],
+	[12, 15],
+	[13, 45],
+	[15, 15],
+	[16, 45],
+] as const
 
-const classLengthMinutes: number = 75;
-type CourseSchedule = Course["schedules"][0];
+const classLengthMinutes: number = 75
+type CourseSchedule = Course["schedules"][0]
 
-const isNextSchedule = (
-  prevSchedule: CourseSchedule,
-  schedule: CourseSchedule,
-) =>
-  prevSchedule.module == schedule.module &&
-  prevSchedule.day == schedule.day &&
-  prevSchedule.period + 1 == schedule.period;
+const isNextSchedule = (prevSchedule: CourseSchedule, schedule: CourseSchedule) =>
+	prevSchedule.module == schedule.module &&
+	prevSchedule.day == schedule.day &&
+	prevSchedule.period + 1 == schedule.period
 
 /**
  * 現在（or与えられた日時が？）どのモジュール期間であるかを返します。
  * @todo
  */
 const getCurrentModule = () => {
-  return "秋B";
-};
+	return "秋B"
+}
 
 /**
  * 科目について、ある時刻以降の授業時間帯をすべて取得する。
@@ -102,64 +81,56 @@ const getCurrentModule = () => {
  * @returns 授業時間帯（開始・終了時刻の組）の配列
  */
 export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
-  const currentModule = getCurrentModule();
-  const currentSchedules = course.schedules.filter(
-    (s) => s.module == currentModule,
-  );
-  const periods = currentSchedules
-    .flatMap((s) => {
-      const nextClassDate = nextDateOfDay(baseDate, s.day);
-      if (nextClassDate == undefined) {
-        console.log("s:", s);
-        console.log(
-          `nextDateOfDay(${baseDate.toISOString()}, ${s.day}) == undefined`,
-        );
-        return [];
-      }
+	const currentModule = getCurrentModule()
+	const currentSchedules = course.schedules
+		.filter(s => s.module == currentModule)
+	const periods = currentSchedules
+		.flatMap(s => {
+			const nextClassDate = nextDateOfDay(baseDate, s.day)
+			if (nextClassDate == undefined) {
+				console.log("s:", s)
+				console.log(`nextDateOfDay(${baseDate.toISOString()}, ${s.day}) == undefined`)
+				return []
+			}
 
-      const startTime = CLASS_START_TIMES.at(s.period - 1);
-      if (startTime == undefined) {
-        console.log("s:", s);
-        console.log(`classStartTimes.at(s.period)==undefined`);
-        return [];
-      }
-      const [hh, mm] = startTime;
-      const start = setTimes(nextClassDate)(hh, mm);
-      const end = new Date(start);
-      end.setMinutes(end.getMinutes() + classLengthMinutes);
+			const startTime = CLASS_START_TIMES.at(s.period - 1)
+			if (startTime == undefined) {
+				console.log("s:", s)
+				console.log(`classStartTimes.at(s.period)==undefined`)
+				return []
+			}
+			const [hh, mm] = startTime
+			const start = setTimes(nextClassDate)(hh, mm)
+			const end = new Date(start)
+			end.setMinutes(end.getMinutes() + classLengthMinutes)
 
-      return { start, end };
-    })
-    .filter((date) => date != undefined);
+			return { start, end }
+		})
+		.filter(date => date != undefined)
 
-  // 連続するnコマを一つの period にまとめる
+	// 連続するnコマを一つの period にまとめる
 
-  const {
-    p: [periodss, lastPeriods],
-  } = periods.reduce(
-    ({ lastSchedule, p: [periodss, periods] }, period, i) => {
-      const schedule = currentSchedules[i];
-      return (lastSchedule ? isNextSchedule(lastSchedule, schedule) : true)
-        ? { lastSchedule: schedule, p: [periodss, [...periods, period]] }
-        : { lastSchedule: schedule, p: [[...periodss, periods], [period]] };
-    },
-    { lastSchedule: undefined, p: [[], []] } as {
-      lastSchedule: CourseSchedule | undefined;
-      p: [Period[][], Period[]];
-    },
-  );
+	const { p: [periodss, lastPeriods] } = periods.reduce(
+		({ lastSchedule, p: [periodss, periods] }, period, i) => {
+			const schedule = currentSchedules[i]
+			return (lastSchedule ? isNextSchedule(lastSchedule, schedule) : true)
+				? { lastSchedule: schedule, p: [periodss, [...periods, period]] }
+				: { lastSchedule: schedule, p: [[...periodss, periods], [period]] }
+		},
+		{ lastSchedule: undefined, p: [[], []] } as { lastSchedule: CourseSchedule | undefined, p: [Period[][], Period[]] }
+	)
 
-  return [...periodss, lastPeriods].flatMap((periods) =>
-    periods.length == 0
-      ? []
-      : [
-          {
-            start: periods[0].start,
-            end: periods[periods.length - 1].end,
-          },
-        ],
-  );
-};
+	return [...periodss, lastPeriods].flatMap(periods =>
+		periods.length == 0
+			? []
+			: [
+				{
+					start: periods[0].start,
+					end: periods[periods.length - 1].end,
+				},
+			]
+	)
+}
 
 // export const mixFreeClassPeriod = (freePeriods: Period[], classPeriod: Period[]) => {
 

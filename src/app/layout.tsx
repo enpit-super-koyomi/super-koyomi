@@ -36,14 +36,11 @@ export default async function RootLayout({
       >
         <header className="w-full flex justify-between items-center p-3 fixed top-0 bg-white z-10">
           <p>スーパーこよみ</p>
-          <UserWidget
-            signin={Boolean(session?.user)}
-            name={session?.user?.name ?? undefined}
-            picture={session?.user?.image ?? undefined}
-          />
+          <UserWidget signin={Boolean(session?.user)} name={session?.user?.name ?? undefined} picture={session?.user?.image ?? undefined}  />
         </header>
 
-        <div className="relative h-8"></div>
+        <div className="relative h-8">
+        </div>
 
         {children}
       </body>

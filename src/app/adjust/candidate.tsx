@@ -2,12 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { addEvent } from "@/lib/addEvent";
-import {
-  ExcludePeriod,
-  Period,
-  findFreePeriods,
-  periodsOfUsers,
-} from "@/lib/scheduling";
+import { ExcludePeriod, Period, findFreePeriods, periodsOfUsers } from "@/lib/scheduling";
 import { formatDate, formatDuration } from "@/lib/utils";
 import { User } from "@prisma/client";
 import { useEffect, useRef, useState } from "react";
@@ -56,18 +51,12 @@ export default function Candidate(props: Props) {
       ];
       console.debug("すべての授業の、授業時間の配列", classPeriods);
 
-      const freePeriods = await findFreePeriods(
-        props.selectedDurationMinute,
-        periods,
-      );
+      const freePeriods = await findFreePeriods(props.selectedDurationMinute, periods);
       console.log("freePfreePeriods:", freePeriods);
 
       setFreePeriods(freePeriods);
     } catch (e) {
-      toast("Sorry, free time compute error!", {
-        type: "error",
-        autoClose: false,
-      });
+      toast("Sorry, free time compute error!", { type: "error", autoClose: false });
       console.error(e);
     } finally {
       setIsButtonActive(true);
@@ -85,26 +74,21 @@ export default function Candidate(props: Props) {
         description: null,
         location: null,
         status: "CONFIRMED",
-        attendees: props.users.filter((user) =>
-          props.selectedUserIds.includes(user.id),
-        ),
+        attendees: props.users.filter((user) => props.selectedUserIds.includes(user.id)),
       });
 
       toast(
         `カレンダーに追加されました。\n${formatDate(period_spanned.start)} から${formatDuration(
-          props.selectedDurationMinute,
+          props.selectedDurationMinute
         )}`,
         {
           onClick: () => {
             open("https://calendar.google.com/calendar", "_blank");
           },
-        },
+        }
       );
     } catch (e) {
-      toast("Sorry, calendar event addition error!", {
-        type: "error",
-        autoClose: false,
-      });
+      toast("Sorry, calendar event addition error!", { type: "error", autoClose: false });
       console.error(e);
     }
   }
@@ -114,9 +98,7 @@ export default function Candidate(props: Props) {
 
     const period_spanned: Period = {
       start: period.start,
-      end: new Date(
-        period.start.getTime() + 1000 * 60 * props.selectedDurationMinute,
-      ),
+      end: new Date(period.start.getTime() + 1000 * 60 * props.selectedDurationMinute),
     };
     setSpannedPeriod(period_spanned);
     yesNoDialogRef.current?.showModal();
@@ -136,13 +118,9 @@ export default function Candidate(props: Props) {
         message="Are you sure you want to add this event to your calendar?"
         ref={yesNoDialogRef}
         onYes={() => handleDialogConfirm()}
-        onNo={() => {}}
+        onNo={() => { }}
       />
-      <Button
-        onClick={handleSchedule}
-        disabled={!isButtonActive}
-        className="w-full"
-      >
+      <Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
         「{props.title || "-"}」の日時候補を探す
       </Button>
       <ul className="py-4 space-y-2">
@@ -155,7 +133,10 @@ export default function Candidate(props: Props) {
             courses={props.courses}
             onAddPeriod={addConfirmedPeriodToCalendar}
             selectedDurationMinutes={props.selectedDurationMinute}
-            selectedPeriodState={[selectedPeriod, setSelectedPeriod]}
+            selectedPeriodState={[
+              selectedPeriod,
+              setSelectedPeriod
+            ]}
           />
         ) : (
           ""
@@ -165,9 +146,7 @@ export default function Candidate(props: Props) {
           <li key={period.start.toString()}>
             <Button
               disabled={!isButtonActive}
-              variant={
-                selectedPeriod?.start === period.start ? "secondary" : "ghost"
-              }
+              variant={selectedPeriod?.start === period.start ? "secondary" : "ghost"}
               className="w-full justify-between font-normal"
               onClick={() => handlePeriodClick(period)}
             >
