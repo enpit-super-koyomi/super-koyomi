@@ -159,12 +159,11 @@ export function WeekView({
     }
   }
 
-  const handleConfirm = ({ start: startTime, end: endTime }: Period) => {
-    onAddPeriod({ start: startTime, end: endTime });
-    setIsConfirmationOpen(false);
-  };
+  const handleConfirm = ({start: startTime, end: endTime}: Period) => {
+    onAddPeriod({ start: startTime, end: endTime })
+    setIsConfirmationOpen(false)
+  }
 
-  /** @todo Reduce this TOO DEEP nest */
   return (
     <div className="max-w-full overflow-x-auto">
       <div className="grid grid-cols-8 gap-px bg-gray-200">
@@ -173,7 +172,7 @@ export function WeekView({
           <div
             key={date.toISOString()}
             className="text-center text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl py-2 font-semibold bg-white">
-            {date.toLocaleDateString("ja-JP", { // 日時
+            {date.toLocaleDateString("ja-JP", {
               weekday: "short",
               month: "numeric",
               day: "numeric",
@@ -199,14 +198,8 @@ export function WeekView({
 						ref={dateRef}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp} >
-          	{hours.map(hour => (
-          		<div
-          			key={`${date.toISOString()}-${hour}`}
-          			className="absolute top-0 w-full h-[60px] border-t border-gray-100"
-          			style={{ top: `${hour * 60}px` }} // 1時間ごとに線を描画
-          		></div>
-          	))}
+            onMouseLeave={handleMouseUp}
+          >
             {[
               ...periods
                 .filter(period => period.start.toDateString() === date.toDateString())
@@ -216,7 +209,7 @@ export function WeekView({
                     <button
                       key={period.start.toString()}
                       disabled={!isButtonActive}
-                      className={`absolute w-full px-1 py-1 text-xs border rounded overflow-hidden transition-opacity hover:opacity-100 opacity-50 text-transparent hover:text-black z-0 hover:z-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
+                      className={`absolute w-full px-1 py-1 text-xs border rounded overflow-hidden transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
                       style={{
                         top: `${top}%`,
                         height: `${height}%`,
