@@ -1,11 +1,11 @@
-"use client";
-import { forwardRef } from "react";
-import { Button } from "@/components/ui/button";
+"use client"
+import { forwardRef } from "react"
+import { Button } from "@/components/ui/button"
 
 interface YesNoDialogOptions {
-  message: string;
-  onYes?: () => void;
-  onNo?: () => void;
+  message: string
+  onYes?: () => void
+  onNo?: () => void
 }
 
 export const YesNoDialog = forwardRef<HTMLDialogElement, YesNoDialogOptions>(
@@ -20,7 +20,7 @@ export const YesNoDialog = forwardRef<HTMLDialogElement, YesNoDialogOptions>(
           <Button onClick={onYes}>Yes</Button>
         </form>
       </dialog>
-    );
-  }
-);
-YesNoDialog.displayName = "YesNoDialog";
+    )
+  },
+)
+YesNoDialog.displayName = "YesNoDialog"
