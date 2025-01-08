@@ -30,8 +30,9 @@ import ImportFileButton from "@/components/ImportFileButton"
 // 	{ id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
 // ]
 
-export default function SchedulePlanner(props: { isSignedIn: boolean; users: User[] }) {
-  const { isSignedIn, users } = props
+export default function SchedulePlanner(props: { currentUserId: string|null; users: User[] }) {
+  const { currentUserId, users } = props
+  const isSignedIn = currentUserId != null
   const [title, setTitle] = useState("")
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
@@ -62,7 +63,7 @@ export default function SchedulePlanner(props: { isSignedIn: boolean; users: Use
             <Exclusion dispatch={setExcludePeriod} defaultValue={excludePeriod} />
             {isSignedIn ? (
               <div className="pl-8">
-                <ImportFileButton setCourses={setCourses} />
+                <ImportFileButton setCourses={setCourses} currentUserId={currentUserId} />
               </div>
             ) : (
               ""

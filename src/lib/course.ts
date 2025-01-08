@@ -1,6 +1,8 @@
+
 import { setTimes } from "./utils"
 import { Period } from "./scheduling"
 import { Course, Day } from "@/third-party/twinte-parser-type"
+import { db } from "./prisma"
 
 export type CoursePeriod = {
   course: Course
@@ -116,3 +118,4 @@ export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
 // export const mixFreeClassPeriod = (freePeriods: Period[], classPeriod: Period[]) => {
 
 // }
+
