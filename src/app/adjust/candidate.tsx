@@ -123,18 +123,19 @@ export default function Candidate(props: Props) {
       <Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
         「{props.title || "-"}」の日時候補を探す
       </Button>
-      <ul className="py-4 space-y-2">
-        {freePeriods.length > 0 ? (
-          <WeekView
-            currentDate={new Date()}
-            handlePeriodClick={handlePeriodClick}
-            periods={freePeriods}
-            isButtonActive={isButtonActive}
-            courses={props.courses}
-          />
-        ) : (
-          ""
-        )}
+      {freePeriods.length > 0 ? (
+        <WeekView
+          currentDate={new Date()}
+          handlePeriodClick={handlePeriodClick}
+          periods={freePeriods}
+          isButtonActive={isButtonActive}
+          courses={props.courses}
+        />
+      ) : (
+        ""
+      )}
+
+      {/* <ul className="py-4 space-y-2">
 
         {freePeriods.map(period => (
           <li key={period.start.toString()}>
@@ -149,11 +150,10 @@ export default function Candidate(props: Props) {
                 <span className="px-2">～</span>
                 <span>{formatDate(period.end)}</span>
               </span>
-              {/* <ChevronRight className="h-4 w-4" /> */}
             </Button>
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   )
 }
