@@ -19,6 +19,8 @@ model User {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    courses Course[]
 }
 
 model Account {
@@ -56,7 +58,7 @@ model VerificationToken {
     identifier String
     token      String
     expires    DateTime
-    
+
     @@id([identifier, token])
 }
 
@@ -73,4 +75,53 @@ model Authenticator {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([userId, credentialID])
+}
+
+model Course {
+    code String @unique @id
+    name String
+    credits Int
+    overview String
+    remarks String
+    type Int
+    recommendedGrade Int[]
+    schedules CourseSchedule[]
+    users User[]
+}
+
+model CourseSchedule {
+    module Module
+    day Day
+    period Int
+    room String
+    courseCode String
+    course Course @relation(fields: [courseCode], references: [code])
+    @@id([module, day, period, room])
+}
+
+enum Module {
+    SpringA
+    SpringB
+    SpringC
+    FallA
+    FallB
+    FallC
+    SummerVacation
+    SpringVacation
+    Annual
+    Unknown
+}
+
+enum Day {
+  Sun
+  Mon
+  Tue
+  Wed
+  Thu
+  Fri
+  Sat
+  Intensive
+  Appointment
+  AnyTime
+  Unknown
 }

@@ -1,7 +1,9 @@
+
 import { setTimes } from "./utils"
 import { Period } from "./scheduling"
 import { Course, Day, Module } from "@/third-party/twinte-parser-type"
 import { FETCH_EVENTS_DAYS } from "./const"
+import { db } from "./prisma"
 
 export type CoursePeriod = {
   course: Course
@@ -177,3 +179,4 @@ export const coursePeriodsThroughWeeks = (courses: Course[], currentDate: Date):
 // export const mixFreeClassPeriod = (freePeriods: Period[], classPeriod: Period[]) => {
 
 // }
+

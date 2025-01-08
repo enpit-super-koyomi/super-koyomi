@@ -1,4 +1,5 @@
-import { Account, PrismaClient, User } from "@prisma/client"
+import { Account, PrismaClient, User, Course as PrismaCourse } from "@prisma/client"
+import { Course } from "@/third-party/twinte-parser-type"
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 export const prisma = globalForPrisma.prisma || new PrismaClient()
@@ -16,4 +17,26 @@ export const db = {
     const users = await prisma.user.findMany()
     return users
   },
+
+  insertCoursesForUser: async (courses: Course[], userId: string) => {
+    const coursesConnected = courses.map(course => {
+      const { schedules, ...withoutSchedules} = course
+      return {
+      ...withoutSchedules,
+        schedules: {
+          connect: [
+            {}
+          ]
+        },
+        users: {
+          connect: [ { id: userId }]
+        }
+      }
+    })
+
+    const res = await prisma.course.createMany({ data: coursesConnected })
+    console.log(res)
+    const resUpd = await prisma.course.updateMany({ data: courses })
+    console.log(resUpd)
+  }
 }

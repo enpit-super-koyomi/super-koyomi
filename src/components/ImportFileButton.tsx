@@ -8,12 +8,15 @@ import { Button } from "./ui/button"
 import { Tooltip, TooltipProvider } from "./ui/tooltip"
 import { toast } from "react-toastify"
 import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip"
+import { db, prisma } from "@/lib/prisma"
+import { insertCoursesForUserOnFileLoad } from "@/lib/server"
 
 const parseRSReferToCodes = (content: string): string[] =>
   content.split("\n").map(line => line.replaceAll(/["\s\r]/gi, ""))
 
 type Prop = {
   setCourses: Dispatch<Course[]>
+  currentUserId: string|null
 }
 
 /**
@@ -43,6 +46,9 @@ export default function ImportFileButton(prop: Prop) {
       setUploadStatus("error")
     } else setUploadStatus("done")
     setCourses(yourCourses)
+    if (prop.currentUserId) {
+      insertCoursesForUserOnFileLoad(yourCourses, prop.currentUserId)
+    }
   }, [allCourses, contents, setCourses, file?.name])
 
   useEffect(() => {
