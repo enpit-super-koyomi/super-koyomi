@@ -1,10 +1,4 @@
-import {
-  $Enums,
-  Account,
-  PrismaClient,
-  User,
-  PrismaPromise,
-} from "@prisma/client"
+import { $Enums, Account, PrismaClient, User, PrismaPromise } from "@prisma/client"
 import { Course } from "@/third-party/twinte-parser-type"
 import { Module, Day } from "@/third-party/twinte-parser-type"
 
@@ -160,24 +154,22 @@ const upsertCourseConnectUser = async (course: Course, userId: string) => {
 
 const upsertCourses = async (courses: Course[], userId: string) => {
   const upsertPromises = courses.map(async course => upsertCourseConnectUser(course, userId))
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return await prisma.$transaction(upsertPromises as PrismaPromise<any>[])
 }
 
-export namespace Db {
-  export const resetUserCourses = async (userId: string) => {
-    return await prisma.user.update({
-      where: { id: userId },
-      data: { courses: { set: [] } },
-    })
-  }
+export const resetUserCourses = async (userId: string) => {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: { courses: { set: [] } },
+  })
+}
 
-  export const setCoursesForUser = async (courses: Course[], userId: string) => {
-    const r = await resetUserCourses(userId)
-    console.log("resetUserCourses:", r)
-    const s = await upsertCourses(courses, userId)
-    console.log("upsertCourses:", s)
-  }
+export const setCoursesForUser = async (courses: Course[], userId: string) => {
+  const r = await resetUserCourses(userId)
+  console.log("resetUserCourses:", r)
+  const s = await upsertCourses(courses, userId)
+  console.log("upsertCourses:", s)
 }
 
 export const db = {
@@ -195,6 +187,7 @@ export const db = {
 
   insertCoursesForUser: async (courses: Course[], userId: string) => {
     const coursesConnected = courses.map(course => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { schedules, ...withoutSchedules } = course
       return {
         ...withoutSchedules,
