@@ -87,6 +87,9 @@ model Course {
     recommendedGrade Int[]
     schedules CourseSchedule[]
     users User[]
+    instructor String
+    error Boolean
+    lastUpdate DateTime
 }
 
 model CourseSchedule {
