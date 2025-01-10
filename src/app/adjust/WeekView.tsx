@@ -1,10 +1,12 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import { formatTime, getEventPosition } from "../../lib/draft/utils"
 import { Period } from "@/lib/scheduling"
 import { CoursePeriod, courseToPeriods } from "@/lib/course"
 import { Course } from "@/third-party/twinte-parser-type"
+import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 type WeekViewProps = {
   periods: Period[]
@@ -35,11 +37,14 @@ export function WeekView({
   isButtonActive,
   courses,
 }: WeekViewProps) {
+  const [currentWeekIndex, setCurrentWeekIndex] = useState(0)
+
   const weekDates = Array.from(Array(7).keys()).map(i => {
     const date = new Date(currentDate)
-    date.setDate(currentDate.getDate() + i)
+    date.setDate(currentDate.getDate() + i + currentWeekIndex * 7)
     return date
   })
+
   const hours = Array.from({ length: 24 }, (_, i) => i)
 
   const coursePeriods: CoursePeriod[] = courses.map(course => ({
@@ -49,9 +54,37 @@ export function WeekView({
 
   console.log("coursePeriods:", coursePeriods)
 
+  const handleNextWeek = () => {
+    setCurrentWeekIndex(prevIndex => Math.min(prevIndex + 1, 3))
+  }
+
+  const handlePreviousWeek = () => {
+    setCurrentWeekIndex(prevIndex => Math.max(prevIndex - 1, 0))
+  }
+
   /** @todo Reduce this TOO DEEP nest */
   return (
     <div className="max-w-full overflow-x-auto">
+      <div className="flex justify-between mb-4">
+        <Button
+          onClick={handlePreviousWeek}
+          disabled={currentWeekIndex === 0}
+          variant="outline"
+          size="icon"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          <span className="sr-only">過去へ</span>
+        </Button>
+        <Button
+          onClick={handleNextWeek}
+          disabled={currentWeekIndex === 3}
+          variant="outline"
+          size="icon"
+        >
+          <ChevronRight className="h-4 w-4" />
+          <span className="sr-only">先へ</span>
+        </Button>
+      </div>
       <div className="grid grid-cols-8 gap-px bg-gray-200">
         <div className="sticky left-0 bg-white "></div>
         {weekDates.map(date => (
