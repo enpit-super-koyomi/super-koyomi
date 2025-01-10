@@ -25,7 +25,7 @@ type Props = {
 export default function Candidate(props: Props) {
   const [isButtonActive, setIsButtonActive] = useState(false)
   const [freePeriods, setFreePeriods] = useState<Period[]>([])
-  const [selectedPeriod, setSelectedPeriod] = useState<Period | null>(null)
+  // const [selectedPeriod, setSelectedPeriod] = useState<Period | null>(null)
   const [spannedPeriod, setSpannedPeriod] = useState<Period | null>(null)
 
   const yesNoDialogRef = useRef<HTMLDialogElement>(null)
@@ -94,7 +94,7 @@ export default function Candidate(props: Props) {
   }
 
   async function handlePeriodClick(period: Period) {
-    setSelectedPeriod(period)
+    // setSelectedPeriod(period)
 
     const period_spanned: Period = {
       start: period.start,

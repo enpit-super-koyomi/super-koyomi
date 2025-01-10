@@ -2,6 +2,7 @@
 
 import { getGuestsEvents, getHostEvents } from "@/lib/getEvents"
 import { excludePeriodOfOffsetDays } from "./utils"
+import { FETCH_EVENTS_DAYS } from "./googleCalendar"
 
 const DURATION_STEP_MILLISEC = 30 * 60e3
 
@@ -136,7 +137,7 @@ export async function periodsOfUsers(userIds: string[], excludePeriod: ExcludePe
   const hostEvents = await getHostEvents()
   const guestsEvents = await getGuestsEvents(userIds)
   const now = new Date()
-  const excludePeriods: Period[] = Array.from(Array(8).keys()).map(offsetDays =>
+  const excludePeriods: Period[] = Array.from(Array(FETCH_EVENTS_DAYS + 1).keys()).map(offsetDays =>
     excludePeriodOfOffsetDays(excludePeriod, offsetDays, now),
   )
   const periodsOfUsers: Period[][] = [...guestsEvents, hostEvents ?? [], excludePeriods]
