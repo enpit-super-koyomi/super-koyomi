@@ -8,7 +8,6 @@ import { Button } from "./ui/button"
 import { Tooltip, TooltipProvider } from "./ui/tooltip"
 import { toast } from "react-toastify"
 import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip"
-import { db, prisma } from "@/lib/prisma"
 import { insertCoursesForUserOnFileLoad } from "@/lib/server"
 
 const parseRSReferToCodes = (content: string): string[] =>
@@ -16,7 +15,7 @@ const parseRSReferToCodes = (content: string): string[] =>
 
 type Prop = {
   setCourses: Dispatch<Course[]>
-  currentUserId: string|null
+  currentUserId: string | null
 }
 
 /**

@@ -5,7 +5,6 @@
 
 import fs from "fs"
 import path from "path"
-import { Day, Module } from "./twinte-parser-type"
 
 export const fetchCourses = () => {
   const filePath = path.join(process.cwd(), "public", "kdb.json")

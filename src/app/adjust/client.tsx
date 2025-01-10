@@ -30,7 +30,7 @@ import ImportFileButton from "@/components/ImportFileButton"
 // 	{ id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
 // ]
 
-export default function SchedulePlanner(props: { currentUserId: string|null; users: User[] }) {
+export default function SchedulePlanner(props: { currentUserId: string | null; users: User[] }) {
   const { currentUserId, users } = props
   const isSignedIn = currentUserId != null
   const [title, setTitle] = useState("")
