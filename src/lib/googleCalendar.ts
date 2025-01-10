@@ -1,7 +1,7 @@
 import { Calendar, CalEvent, DEFAULT_EVENT, EventStatus, SlimedCalEvent } from "@/logic/calendar"
 import { google, calendar_v3 } from "googleapis"
 
-const FETCH_EVENTS_DURATION = 7 * 24 * 60 * 60 * 1000
+const FETCH_EVENTS_DURATION = 30 * 24 * 60 * 60 * 1000
 
 const SUPER_KOYOMI_CALENDAR_NAME = "スーパーこよみで追加された予定"
 
