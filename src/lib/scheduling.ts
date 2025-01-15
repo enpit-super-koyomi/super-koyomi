@@ -2,7 +2,7 @@
 
 import { getGuestsEvents, getHostEvents } from "@/lib/getEvents"
 import { excludePeriodOfOffsetDays } from "./utils"
-import { FETCH_EVENTS_DAYS } from "./googleCalendar"
+import { FETCH_EVENTS_DAYS } from "./const"
 
 const DURATION_STEP_MILLISEC = 30 * 60e3
 
