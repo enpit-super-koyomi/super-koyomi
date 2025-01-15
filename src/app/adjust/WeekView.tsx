@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { formatTime, getEventPosition } from "../../lib/draft/utils"
 import { Period } from "@/lib/scheduling"
-import { CoursePeriod, courseToPeriods } from "@/lib/course"
+import { coursePeriodsThroughWeeks } from "@/lib/course"
 import { Course } from "@/third-party/twinte-parser-type"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -47,12 +47,7 @@ export function WeekView({
 
   const hours = Array.from({ length: 24 }, (_, i) => i)
 
-  const coursePeriods: CoursePeriod[] = courses.map(course => ({
-    course,
-    periods: courseToPeriods(currentDate, course),
-  }))
-
-  console.log("coursePeriods:", coursePeriods)
+  const coursePeriods = coursePeriodsThroughWeeks(courses, currentDate)
 
   const handleNextWeek = () => {
     setCurrentWeekIndex(prevIndex => Math.min(prevIndex + 1, 3))

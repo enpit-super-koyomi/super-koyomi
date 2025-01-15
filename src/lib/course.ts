@@ -1,6 +1,7 @@
 import { setTimes } from "./utils"
 import { Period } from "./scheduling"
 import { Course, Day } from "@/third-party/twinte-parser-type"
+import { FETCH_EVENTS_DAYS } from "./const"
 
 export type CoursePeriod = {
   course: Course
@@ -111,6 +112,32 @@ export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
           },
         ],
   )
+}
+
+export const coursePeriodsThroughWeeks = (courses: Course[], currentDate: Date): CoursePeriod[] => {
+  const weekIndice = Array.from({ length: Math.ceil(FETCH_EVENTS_DAYS / 7) + 1 }, (_, i) => i)
+
+  console.log("weekIndice", weekIndice)
+
+  const coursePeriods: CoursePeriod[] = courses.map(course => {
+    const periods = courseToPeriods(currentDate, course).flatMap(period =>
+      weekIndice.map(i => {
+        const p = {
+          start: new Date(period.start),
+          end: new Date(period.end),
+        }
+        p.start.setDate(p.start.getDate() + 7 * i)
+        p.end.setDate(p.end.getDate() + 7 * i)
+        return p
+      }),
+    )
+
+    return { course, periods }
+  })
+
+  console.log("coursePeriods:", coursePeriods)
+
+  return coursePeriods
 }
 
 // export const mixFreeClassPeriod = (freePeriods: Period[], classPeriod: Period[]) => {

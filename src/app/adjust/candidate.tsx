@@ -10,7 +10,7 @@ import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
 import { Course } from "@/third-party/twinte-parser-type"
 import { YesNoDialog } from "@/components/ui/dialog"
-import { courseToPeriods } from "@/lib/course"
+import { coursePeriodsThroughWeeks } from "@/lib/course"
 
 type Props = {
   title: string
@@ -37,19 +37,12 @@ export default function Candidate(props: Props) {
   async function handleSchedule() {
     setIsButtonActive(false)
     try {
-      // 科目に対する授業時間の配列を求める
-      const classPeriods: Period[] = props.courses
-        .map(course => {
-          const periods = courseToPeriods(new Date(), course)
-          console.debug("科目に対する授業時間の配列", periods)
-          return periods
-        })
-        .flat()
+      const coursePeriods = coursePeriodsThroughWeeks(props.courses, new Date())
       const periods = [
         ...(await periodsOfUsers(props.selectedUserIds, props.excludePeriod)),
-        classPeriods,
+        coursePeriods.flatMap(({ periods }) => periods),
       ]
-      console.debug("すべての授業の、授業時間の配列", classPeriods)
+      console.debug("授業とそれぞれの授業時間の配列", coursePeriods)
 
       const freePeriods = await findFreePeriods(props.selectedDurationMinute, periods)
       console.log("freePfreePeriods:", freePeriods)
