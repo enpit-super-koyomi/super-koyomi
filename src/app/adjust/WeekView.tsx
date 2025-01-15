@@ -3,13 +3,10 @@
 import React, { useState } from "react"
 import { formatTime, getEventPosition } from "../../lib/draft/utils"
 import { Period } from "@/lib/scheduling"
-import { CoursePeriod, coursePeriodsThroughWeeks, courseToPeriods } from "@/lib/course"
+import { coursePeriodsThroughWeeks } from "@/lib/course"
 import { Course } from "@/third-party/twinte-parser-type"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-// import { FETCH_EVENTS_DAYS } from "@/lib/googleCalendar"
-
-const FETCH_EVENTS_DAYS = 30
 
 type WeekViewProps = {
   periods: Period[]

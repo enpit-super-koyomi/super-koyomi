@@ -10,7 +10,7 @@ import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
 import { Course } from "@/third-party/twinte-parser-type"
 import { YesNoDialog } from "@/components/ui/dialog"
-import { CoursePeriod, coursePeriodsThroughWeeks, courseToPeriods } from "@/lib/course"
+import { coursePeriodsThroughWeeks } from "@/lib/course"
 
 type Props = {
   title: string
