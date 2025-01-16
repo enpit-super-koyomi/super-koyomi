@@ -50,40 +50,40 @@ const isNextSchedule = (prevSchedule: CourseSchedule, schedule: CourseSchedule) 
  * @returns 基本の６モジュールの時はその文字列を返す（"春A"）。そうでない場合は"Unknown"を返す。
  */
 const getCurrentModule = (): Module => {
-	//春Aから秋Cまでの開始と終了日時を定義
-	const startSpringA = new Date(2024, 4, 15)
-	const startSpringB = new Date(2024, 5, 24)
-	const startSpringC = new Date(2024, 7, 5)
-	const endSpringC = new Date(20204, 8, 9)
-	const startFallA = new Date(2024, 10, 1)
-	const startFallB = new Date(2024, 11, 11)
-	const endFallB = new Date(2024, 12, 25)
-	const startFallC = new Date(2025, 1, 6)
-	const endFallC = new Date(2025, 2, 27)
-	//現在の日時を取得
-	const currentDate = new Date()
-	if (currentDate < startSpringA) {
-		return Module.Unknown
-	}
-	if (currentDate >= startSpringA && currentDate < startSpringB) {
-		return Module.SpringA
-	}
-	if (currentDate >= startSpringB && currentDate < startSpringC) {
-		return Module.SpringB
-	}
-	if (currentDate >= startSpringC && currentDate < endSpringC) {
-		return Module.SpringC
-	}
-	if (currentDate >= startFallA && currentDate < startFallB) {
-		return Module.FallA
-	}
-	if (currentDate >= startFallB && currentDate < endFallB) {
-		return Module.FallB
-	}
-	if (currentDate >= startFallC && currentDate < endFallC) {
-		return Module.FallC
-	}
-	return Module.Unknown
+  //春Aから秋Cまでの開始と終了日時を定義
+  const startSpringA = new Date(2024, 4, 15)
+  const startSpringB = new Date(2024, 5, 24)
+  const startSpringC = new Date(2024, 7, 5)
+  const endSpringC = new Date(20204, 8, 9)
+  const startFallA = new Date(2024, 10, 1)
+  const startFallB = new Date(2024, 11, 11)
+  const endFallB = new Date(2024, 12, 25)
+  const startFallC = new Date(2025, 1, 6)
+  const endFallC = new Date(2025, 2, 27)
+  //現在の日時を取得
+  const currentDate = new Date()
+  if (currentDate < startSpringA) {
+    return Module.Unknown
+  }
+  if (currentDate >= startSpringA && currentDate < startSpringB) {
+    return Module.SpringA
+  }
+  if (currentDate >= startSpringB && currentDate < startSpringC) {
+    return Module.SpringB
+  }
+  if (currentDate >= startSpringC && currentDate < endSpringC) {
+    return Module.SpringC
+  }
+  if (currentDate >= startFallA && currentDate < startFallB) {
+    return Module.FallA
+  }
+  if (currentDate >= startFallB && currentDate < endFallB) {
+    return Module.FallB
+  }
+  if (currentDate >= startFallC && currentDate < endFallC) {
+    return Module.FallC
+  }
+  return Module.Unknown
 }
 
 /**
