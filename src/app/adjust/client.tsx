@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Dispatch, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -30,14 +30,20 @@ import ImportFileButton from "@/components/ImportFileButton"
 // 	{ id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
 // ]
 
-export default function SchedulePlanner(props: { currentUserId: string | null; users: User[] }) {
+export default function SchedulePlanner(props: {
+  currentUserId: string | null
+  users: User[]
+  allCourses?: Course[]
+  setAllCourses?: Dispatch<Course[]>
+  courses?: Course[]
+}) {
   const { currentUserId, users } = props
   const isSignedIn = currentUserId != null
   const [title, setTitle] = useState("")
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
   const [excludePeriod, setExcludePeriod] = useState<ExcludePeriod>({ start: 22, end: 8 })
-  const [courses, setCourses] = useState<Course[]>([])
+  const [courses, setCourses] = useState<Course[]>(props.courses ?? [])
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -63,7 +69,11 @@ export default function SchedulePlanner(props: { currentUserId: string | null; u
             <Exclusion dispatch={setExcludePeriod} defaultValue={excludePeriod} />
             {isSignedIn ? (
               <div className="pl-8">
-                <ImportFileButton setCourses={setCourses} currentUserId={currentUserId} />
+                <ImportFileButton
+                  setCourses={setCourses}
+                  allCourses={props.allCourses}
+                  setAllCourses={props.setAllCourses}
+                  currentUserId={currentUserId} />
               </div>
             ) : (
               ""

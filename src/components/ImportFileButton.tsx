@@ -16,6 +16,8 @@ const parseRSReferToCodes = (content: string): string[] =>
 type Prop = {
   setCourses: Dispatch<Course[]>
   currentUserId: string | null
+  allCourses?: Course[]
+  setAllCourses?: Dispatch<Course[]>
 }
 
 /**
@@ -26,7 +28,7 @@ type Prop = {
 export default function ImportFileButton(prop: Prop) {
   const { setCourses } = prop
   const [contents, setContents] = useState<string>()
-  const [allCourses, setAllCourses] = useState<Course[]>([])
+  // const [allCourses, setAllCourses] = useState<Course[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadStatus, setUploadStatus] = useState<"done" | "yet" | "error">("yet")
 
@@ -36,7 +38,7 @@ export default function ImportFileButton(prop: Prop) {
     if (!contents || !file?.name) return
     const codes = parseRSReferToCodes(contents)
     console.log("codes", codes)
-    const yourCourses = allCourses.filter(c => codes.includes(c.code))
+    const yourCourses = prop.allCourses.filter(c => codes.includes(c.code))
     if (yourCourses.length == 0) {
       toast(
         `科目が見つかりませんでした。 ${file.name} の形式が間違っているかもしれません。\nTWINS から履修情報を出力した RSReferCSV.csv に類するファイルであることをご確認ください。`,
@@ -48,17 +50,17 @@ export default function ImportFileButton(prop: Prop) {
     if (prop.currentUserId) {
       insertCoursesForUserOnFileLoad(yourCourses, prop.currentUserId)
     }
-  }, [allCourses, contents, setCourses, file?.name])
+  }, [prop.allCourses, contents, setCourses, file?.name])
 
   useEffect(() => {
     searchCourses()
-  }, [contents, allCourses, searchCourses])
+  }, [contents, prop.allCourses, searchCourses])
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (allCourses.length == 0) {
+    if (prop.allCourses.length == 0) {
       try {
-        const all = (await fetchCourses()) as Course[]
-        if (!contents) setAllCourses(all)
+        const all = fetchCourses() as Course[]
+        if (!contents) prop.setAllCourses(all)
       } catch (e) {
         console.error(e)
         toast(`KdB JSON を Course[] として解析できませんでした。`, { type: "error" })
