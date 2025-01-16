@@ -78,53 +78,33 @@ model Authenticator {
 }
 
 model Course {
-    code String @unique @id
-    name String
-    credits Int
-    overview String
-    remarks String
-    type Int
-    recommendedGrade Int[]
-    schedules CourseSchedule[]
+    code String @id @unique
     users User[]
-    instructor String
-    error Boolean
-    lastUpdate DateTime
 }
 
-model CourseSchedule {
-    module Module
-    day Day
-    period Int
-    room String
-    courseCode String
-    course Course @relation(fields: [courseCode], references: [code])
-    @@id([module, day, period, room])
-}
+// enum Module {
+//     SpringA
+//     SpringB
+//     SpringC
+//     FallA
+//     FallB
+//     FallC
+//     SummerVacation
+//     SpringVacation
+//     Annual
+//     Unknown
+// }
 
-enum Module {
-    SpringA
-    SpringB
-    SpringC
-    FallA
-    FallB
-    FallC
-    SummerVacation
-    SpringVacation
-    Annual
-    Unknown
-}
-
-enum Day {
-  Sun
-  Mon
-  Tue
-  Wed
-  Thu
-  Fri
-  Sat
-  Intensive
-  Appointment
-  AnyTime
-  Unknown
-}
+// enum Day {
+//   Sun
+//   Mon
+//   Tue
+//   Wed
+//   Thu
+//   Fri
+//   Sat
+//   Intensive
+//   Appointment
+//   AnyTime
+//   Unknown
+// }
