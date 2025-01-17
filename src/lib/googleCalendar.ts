@@ -17,47 +17,47 @@ export class GoogleCalendar implements Calendar {
 
   async getEvents(): Promise<CalEvent[]> {
     const { data: calendars } = await this.client.calendarList.list()
-    const primaryCalendarId = calendars.items?.find(calendar => calendar.primary)?.id
-    if (!primaryCalendarId) {
-      throw new Error("Primary calendar not found")
-    }
+    const calendarIds = calendars.items?.map(calendar => calendar.id).filter(it => it != null) ?? []
 
-    const { data: events } = await this.client.events.list({
-      calendarId: primaryCalendarId!,
-      timeMin: new Date().toISOString(),
-      timeMax: new Date(Date.now() + FETCH_EVENTS_DURATION).toISOString(),
-      singleEvents: true,
-      orderBy: "startTime",
-    })
+    const events = await Promise.all(
+      calendarIds.map(async calendarId => {
+        const { data: events } = await this.client.events.list({
+          calendarId,
+          timeMin: new Date().toISOString(),
+          timeMax: new Date(Date.now() + FETCH_EVENTS_DURATION).toISOString(),
+          singleEvents: true,
+          orderBy: "startTime",
+        })
+        return events
+      }),
+    )
 
-    return (
-      events.items?.map(event => ({
-        id: event.id ?? null,
-        summary: event.summary ?? DEFAULT_EVENT.summary,
-        description: event.description ?? null,
-        location: event.location ?? null,
-        start: event.start ? new Date(event.start.dateTime!) : DEFAULT_EVENT.start,
-        end: event.end ? new Date(event.end.dateTime!) : DEFAULT_EVENT.end,
-        status: event.status
-          ? this.validateEventStatus(event.status)
-            ? event.status
-            : null
-          : null,
-        attendees: event.attendees?.map(it => ({ email: it.email ?? null })) ?? [],
-      })) ?? []
+    return events.flatMap(
+      event =>
+        event.items?.map(event => ({
+          id: event.id ?? null,
+          summary: event.summary ?? DEFAULT_EVENT.summary,
+          description: event.description ?? null,
+          location: event.location ?? null,
+          start: event.start ? new Date(event.start.dateTime!) : DEFAULT_EVENT.start,
+          end: event.end ? new Date(event.end.dateTime!) : DEFAULT_EVENT.end,
+          status: event.status
+            ? this.validateEventStatus(event.status)
+              ? event.status
+              : null
+            : null,
+          attendees: event.attendees?.map(it => ({ email: it.email ?? null })) ?? [],
+        })) ?? [],
     )
   }
 
   async getBusyPeriods(): Promise<SlimedCalEvent[]> {
     const { data: calendars } = await this.client.calendarList.list()
-    const primaryCalendarId = calendars.items?.find(calendar => calendar.primary)?.id
-    if (!primaryCalendarId) {
-      throw new Error("Primary calendar not found")
-    }
+    const calendarIds = calendars.items?.map(calendar => calendar.id) ?? []
 
     const freebusyResult = await this.client.freebusy.query({
       requestBody: {
-        items: [{ id: primaryCalendarId }],
+        items: calendarIds.map(id => ({ id })),
         groupExpansionMax: 100,
         calendarExpansionMax: 50,
         timeMin: new Date().toISOString(),
