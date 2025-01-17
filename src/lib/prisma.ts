@@ -69,6 +69,7 @@ const upsertCourseConnectUser = async (course: Course, userId: string) => {
   // })
 
   const update = {
+
     users: {
       connect: [{ id: userId }],
     },
@@ -78,7 +79,9 @@ const upsertCourseConnectUser = async (course: Course, userId: string) => {
     .update({
       where: { code: course.code },
       data: {
-        ...update,
+        users: {
+          connect: [{ id: userId }]
+        },
       },
     })
 }

@@ -17,7 +17,7 @@ type Prop = {
   setCourses: Dispatch<Course[]>
   currentUserId: string | null
   allCourses?: Course[]
-  setAllCourses?: Dispatch<Course[]>
+  setAllCourses: Dispatch<Course[]>
 }
 
 /**
@@ -31,6 +31,8 @@ export default function ImportFileButton(prop: Prop) {
   // const [allCourses, setAllCourses] = useState<Course[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadStatus, setUploadStatus] = useState<"done" | "yet" | "error">("yet")
+  const isCoursesRegistered = prop.allCourses !== undefined
+
 
   const [file, setFile] = useState<File | null>(null)
 
@@ -38,7 +40,8 @@ export default function ImportFileButton(prop: Prop) {
     if (!contents || !file?.name) return
     const codes = parseRSReferToCodes(contents)
     console.log("codes", codes)
-    const yourCourses = prop.allCourses.filter(c => codes.includes(c.code))
+
+    const yourCourses = prop.allCourses?.filter(c => codes.includes(c.code)) ?? []
     if (yourCourses.length == 0) {
       toast(
         `科目が見つかりませんでした。 ${file.name} の形式が間違っているかもしれません。\nTWINS から履修情報を出力した RSReferCSV.csv に類するファイルであることをご確認ください。`,
@@ -57,7 +60,7 @@ export default function ImportFileButton(prop: Prop) {
   }, [contents, prop.allCourses, searchCourses])
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (prop.allCourses.length == 0) {
+    if (prop.allCourses?.length == 0) {
       try {
         const all = fetchCourses() as Course[]
         if (!contents) prop.setAllCourses(all)

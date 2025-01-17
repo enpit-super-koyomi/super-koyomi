@@ -1,6 +1,6 @@
 "use client"
 
-import { Dispatch, useState } from "react"
+import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -34,7 +34,6 @@ export default function SchedulePlanner(props: {
   currentUserId: string | null
   users: User[]
   allCourses?: Course[]
-  setAllCourses?: Dispatch<Course[]>
   courses?: Course[]
 }) {
   const { currentUserId, users } = props
@@ -44,6 +43,7 @@ export default function SchedulePlanner(props: {
   const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
   const [excludePeriod, setExcludePeriod] = useState<ExcludePeriod>({ start: 22, end: 8 })
   const [courses, setCourses] = useState<Course[]>(props.courses ?? [])
+  const [allCourses, setAllCourses] = useState<Course[]>(props.allCourses ?? [])
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -72,7 +72,7 @@ export default function SchedulePlanner(props: {
                 <ImportFileButton
                   setCourses={setCourses}
                   allCourses={props.allCourses}
-                  setAllCourses={props.setAllCourses}
+                  setAllCourses={setAllCourses}
                   currentUserId={currentUserId} />
               </div>
             ) : (
