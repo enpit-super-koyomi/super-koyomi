@@ -8,7 +8,7 @@ import { Button } from "./ui/button"
 import { Tooltip, TooltipProvider } from "./ui/tooltip"
 import { toast } from "react-toastify"
 import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip"
-import { insertCoursesForUserOnFileLoad } from "@/lib/server"
+import { resetAndUpdateUserCourses } from "@/lib/server"
 
 const parseRSReferToCodes = (content: string): string[] =>
   content.split("\n").map(line => line.replaceAll(/["\s\r]/gi, ""))
@@ -31,8 +31,6 @@ export default function ImportFileButton(prop: Prop) {
   // const [allCourses, setAllCourses] = useState<Course[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadStatus, setUploadStatus] = useState<"done" | "yet" | "error">("yet")
-  const isCoursesRegistered = prop.allCourses !== undefined
-
 
   const [file, setFile] = useState<File | null>(null)
 
@@ -51,7 +49,7 @@ export default function ImportFileButton(prop: Prop) {
     } else setUploadStatus("done")
     setCourses(yourCourses)
     if (prop.currentUserId) {
-      insertCoursesForUserOnFileLoad(yourCourses, prop.currentUserId)
+      resetAndUpdateUserCourses(prop.currentUserId, yourCourses)
     }
   }, [prop.allCourses, contents, setCourses, file?.name])
 

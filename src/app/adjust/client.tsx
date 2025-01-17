@@ -71,9 +71,10 @@ export default function SchedulePlanner(props: {
               <div className="pl-8">
                 <ImportFileButton
                   setCourses={setCourses}
-                  allCourses={props.allCourses}
+                  allCourses={allCourses}
                   setAllCourses={setAllCourses}
-                  currentUserId={currentUserId} />
+                  currentUserId={currentUserId}
+                />
               </div>
             ) : (
               ""
