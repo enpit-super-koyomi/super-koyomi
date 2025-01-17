@@ -26,7 +26,7 @@ export async function resetAndUpdateUserCourses(userId: string, courses: Course[
   }
 }
 
-export async function getUserCourseIds(userId: string): Promise<string[]> {
+export async function getUserCourseCodes(userId: string): Promise<string[]> {
   try {
     const userCourses = await prisma.course.findMany({
       where: { userId: userId },

@@ -11,6 +11,8 @@ import { WeekView } from "./WeekView"
 import { Course } from "@/third-party/twinte-parser-type"
 import { YesNoDialog } from "@/components/ui/dialog"
 import { coursePeriodsThroughWeeks } from "@/lib/course"
+import { CoursePeriod, courseToPeriods } from "@/lib/course"
+import { getUserCourseCodes } from "@/lib/server"
 
 type Props = {
   title: string
@@ -20,6 +22,7 @@ type Props = {
   selectedDurationMinute: number
   /** 履修中の講義一覧 */
   courses: Course[]
+  allCourses: Course[]
 }
 
 export default function Candidate(props: Props) {
@@ -34,15 +37,41 @@ export default function Candidate(props: Props) {
     setIsButtonActive(props.title.trim() !== "")
   }, [props.title])
 
+  // 自分の授業とその時間の配列
+  const coursePeriods: CoursePeriod[] = props.courses.map(course => ({
+    course,
+    periods: courseToPeriods(new Date(), course),
+  }))
+
   async function handleSchedule() {
     setIsButtonActive(false)
     try {
-      const coursePeriods = coursePeriodsThroughWeeks(props.courses, new Date())
+      // 招待相手ごとの授業とその時間の配列
+      const coursePeriodsOfGuests: CoursePeriod[][] = (
+        await Promise.all(props.selectedUserIds.map(getUserCourseCodes))
+      ).map(codes =>
+        props.allCourses
+          .filter(({ code }) => codes.includes(code))
+          .map(course => ({
+            course,
+            periods: courseToPeriods(new Date(), course),
+          })),
+      )
+
+      console.debug("自分の授業とその時間の配列", coursePeriods)
+      console.debug("招待相手ごとの授業とその時間の配列", coursePeriodsOfGuests)
+
+      // 自分と招待相手全員を合わせた授業時間の配列
+      const classPeriodsOfUsers: Period[] = [...coursePeriodsOfGuests, coursePeriods].flatMap(
+        coursePeriods => coursePeriods.flatMap(({ periods }) => periods),
+      )
+
+      console.debug("すべての授業の、授業時間の配列", classPeriodsOfUsers)
+
       const periods = [
         ...(await periodsOfUsers(props.selectedUserIds, props.excludePeriod)),
-        coursePeriods.flatMap(({ periods }) => periods),
+        classPeriodsOfUsers,
       ]
-      console.debug("授業とそれぞれの授業時間の配列", coursePeriods)
 
       const freePeriods = await findFreePeriods(props.selectedDurationMinute, periods)
       console.log("freePfreePeriods:", freePeriods)
@@ -128,25 +157,6 @@ export default function Candidate(props: Props) {
         ""
       )}
 
-      {/* <ul className="py-4 space-y-2">
-
-        {freePeriods.map(period => (
-          <li key={period.start.toString()}>
-            <Button
-              disabled={!isButtonActive}
-              variant={selectedPeriod?.start === period.start ? "secondary" : "ghost"}
-              className="w-full justify-between font-normal"
-              onClick={() => handlePeriodClick(period)}
-            >
-              <span className="flex items-center mr-2 h-4 w-4">
-                <span>{formatDate(period.start)}</span>
-                <span className="px-2">～</span>
-                <span>{formatDate(period.end)}</span>
-              </span>
-            </Button>
-          </li>
-        ))}
-      </ul> */}
     </div>
   )
 }

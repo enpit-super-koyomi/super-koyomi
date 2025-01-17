@@ -116,6 +116,7 @@ export default function SchedulePlanner(props: {
         title={title}
         users={users}
         courses={courses}
+        allCourses={allCourses}
       />
       <ToastContainer />
     </div>

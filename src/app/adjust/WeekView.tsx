@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { formatTime, getEventPosition } from "../../lib/draft/utils"
 import { Period } from "@/lib/scheduling"
-import { coursePeriodsThroughWeeks } from "@/lib/course"
+import { CoursePeriod } from "@/lib/course"
 import { Course } from "@/third-party/twinte-parser-type"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -13,7 +13,7 @@ type WeekViewProps = {
   currentDate: Date
   handlePeriodClick: (period: Period) => Promise<void>
   isButtonActive: boolean
-  courses: Course[]
+  coursePeriods: CoursePeriod[]
 }
 
 const handleClassClick = (courseWithPeriod: CourseWithPeriod) => {
@@ -35,7 +35,7 @@ export function WeekView({
   currentDate,
   handlePeriodClick,
   isButtonActive,
-  courses,
+  coursePeriods,
 }: WeekViewProps) {
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0)
 
@@ -47,8 +47,6 @@ export function WeekView({
 
   const hours = Array.from({ length: 24 }, (_, i) => i)
 
-  const coursePeriods = coursePeriodsThroughWeeks(courses, currentDate)
-
   const handleNextWeek = () => {
     setCurrentWeekIndex(prevIndex => Math.min(prevIndex + 1, 3))
   }
@@ -56,6 +54,7 @@ export function WeekView({
   const handlePreviousWeek = () => {
     setCurrentWeekIndex(prevIndex => Math.max(prevIndex - 1, 0))
   }
+  console.log("coursePeriods:", coursePeriods)
 
   /** @todo Reduce this TOO DEEP nest */
   return (
