@@ -78,33 +78,9 @@ model Authenticator {
 }
 
 model Course {
-    code String @id @unique
-    users User[]
+    userId String
+    code   String
+    user   User   @relation(fields: [userId], references: [id])
+
+    @@id([userId, code])
 }
-
-// enum Module {
-//     SpringA
-//     SpringB
-//     SpringC
-//     FallA
-//     FallB
-//     FallC
-//     SummerVacation
-//     SpringVacation
-//     Annual
-//     Unknown
-// }
-
-// enum Day {
-//   Sun
-//   Mon
-//   Tue
-//   Wed
-//   Thu
-//   Fri
-//   Sat
-//   Intensive
-//   Appointment
-//   AnyTime
-//   Unknown
-// }
