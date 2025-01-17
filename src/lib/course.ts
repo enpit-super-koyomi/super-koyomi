@@ -51,15 +51,15 @@ const isNextSchedule = (prevSchedule: CourseSchedule, schedule: CourseSchedule) 
  */
 const getCurrentModule = (): Module => {
   //春Aから秋Cまでの開始と終了日時を定義
-  const startSpringA = new Date(2024, 4, 15)
-  const startSpringB = new Date(2024, 5, 24)
-  const startSpringC = new Date(2024, 7, 5)
-  const endSpringC = new Date(20204, 8, 9)
-  const startFallA = new Date(2024, 10, 1)
-  const startFallB = new Date(2024, 11, 11)
-  const endFallB = new Date(2024, 12, 25)
-  const startFallC = new Date(2025, 1, 6)
-  const endFallC = new Date(2025, 2, 27)
+  const startSpringA = new Date("2024/4/15")
+  const startSpringB = new Date("2024/5/24")
+  const startSpringC = new Date("2024/7/5")
+  const endSpringC = new Date("2024/8/9")
+  const startFallA = new Date("2024/10/1")
+  const startFallB = new Date("2024/11/11")
+  const endFallB = new Date("2024/12/25")
+  const startFallC = new Date("2025/1/6")
+  const endFallC = new Date("2025/2/27")
   //現在の日時を取得
   const currentDate = new Date()
   if (currentDate < startSpringA) {
@@ -151,8 +151,6 @@ export const courseToPeriods = (baseDate: Date, course: Course): Period[] => {
 export const coursePeriodsThroughWeeks = (courses: Course[], currentDate: Date): CoursePeriod[] => {
   const weekIndice = Array.from({ length: Math.ceil(FETCH_EVENTS_DAYS / 7) + 1 }, (_, i) => i)
 
-  console.log("weekIndice", weekIndice)
-
   const coursePeriods: CoursePeriod[] = courses.map(course => {
     const periods = courseToPeriods(currentDate, course).flatMap(period =>
       weekIndice.map(i => {
@@ -168,8 +166,6 @@ export const coursePeriodsThroughWeeks = (courses: Course[], currentDate: Date):
 
     return { course, periods }
   })
-
-  console.log("coursePeriods:", coursePeriods)
 
   return coursePeriods
 }

@@ -68,7 +68,7 @@ export default function Candidate(props: Props) {
       ]
 
       const freePeriods = await findFreePeriods(props.selectedDurationMinute, periods)
-      console.log("freePfreePeriods:", freePeriods)
+      console.log("freePeriods:", freePeriods)
 
       setFreePeriods(freePeriods)
     } catch (e) {
