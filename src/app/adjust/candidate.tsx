@@ -11,7 +11,7 @@ import { WeekView } from "./WeekView"
 import { Course } from "@/third-party/twinte-parser-type"
 import { YesNoDialog } from "@/components/ui/dialog"
 import { coursePeriodsThroughWeeks } from "@/lib/course"
-import { CoursePeriod, courseToPeriods } from "@/lib/course"
+import { CoursePeriod } from "@/lib/course"
 import { getUserCourseCodes } from "@/lib/server"
 
 type Props = {
