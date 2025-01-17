@@ -20,6 +20,7 @@ import { formatDuration } from "@/lib/utils"
 import Candidate from "./candidate"
 import { Course } from "@/third-party/twinte-parser-type"
 import ImportFileButton from "@/components/ImportFileButton"
+import InvitationUrlGenerator from "@/components/InvitationUrlGenerator"
 
 // const people = [
 // 	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
@@ -30,7 +31,11 @@ import ImportFileButton from "@/components/ImportFileButton"
 // 	{ id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
 // ]
 
-export default function SchedulePlanner(props: { isSignedIn: boolean; users: User[] }) {
+export default function SchedulePlanner(props: {
+  isSignedIn: boolean
+  users: User[]
+  myId: string | undefined
+}) {
   const { isSignedIn, users } = props
   const [title, setTitle] = useState("")
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
@@ -71,6 +76,7 @@ export default function SchedulePlanner(props: { isSignedIn: boolean; users: Use
         </div>
         <div>
           <Label>招待する人</Label>
+          {props.myId && <InvitationUrlGenerator tokenOwner={props.myId} />}
           <div className="mt-2 space-y-2">
             {users.map(user => (
               <div key={user.id} className="flex items-center">

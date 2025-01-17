@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth"
 
 export default async function AdjustPage() {
   const session = await getServerSession(authOptions)
-  const users = (await db.allUsers()).filter(user => user.email !== session?.user.email)
+  const friends = session?.user.id == undefined ? [] : await db.friendsOf(session.user.id)
 
-  return <SchedulePlanner users={users} isSignedIn={!!session} />
+  return <SchedulePlanner users={friends} isSignedIn={!!session} myId={session?.user.id} />
 }
