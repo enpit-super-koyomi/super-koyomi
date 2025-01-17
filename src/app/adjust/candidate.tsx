@@ -38,24 +38,18 @@ export default function Candidate(props: Props) {
   }, [props.title])
 
   // 自分の授業とその時間の配列
-  const coursePeriods: CoursePeriod[] = props.courses.map(course => ({
-    course,
-    periods: courseToPeriods(new Date(), course),
-  }))
+  const coursePeriods: CoursePeriod[] = coursePeriodsThroughWeeks(props.courses, new Date())
 
   async function handleSchedule() {
     setIsButtonActive(false)
     try {
       // 招待相手ごとの授業とその時間の配列
-      const coursePeriodsOfGuests: CoursePeriod[][] = (
+      const coursesOfGuests: Course[][] = (
         await Promise.all(props.selectedUserIds.map(getUserCourseCodes))
-      ).map(codes =>
-        props.allCourses
-          .filter(({ code }) => codes.includes(code))
-          .map(course => ({
-            course,
-            periods: courseToPeriods(new Date(), course),
-          })),
+      ).map(codes => props.allCourses.filter(({ code }) => codes.includes(code)))
+
+      const coursePeriodsOfGuests = coursesOfGuests.map(courses =>
+        coursePeriodsThroughWeeks(courses, new Date()),
       )
 
       console.debug("自分の授業とその時間の配列", coursePeriods)
@@ -151,12 +145,11 @@ export default function Candidate(props: Props) {
           handlePeriodClick={handlePeriodClick}
           periods={freePeriods}
           isButtonActive={isButtonActive}
-          courses={props.courses}
+          coursePeriods={coursePeriods}
         />
       ) : (
         ""
       )}
-
     </div>
   )
 }

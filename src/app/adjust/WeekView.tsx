@@ -54,7 +54,6 @@ export function WeekView({
   const handlePreviousWeek = () => {
     setCurrentWeekIndex(prevIndex => Math.max(prevIndex - 1, 0))
   }
-  console.log("coursePeriods:", coursePeriods)
 
   /** @todo Reduce this TOO DEEP nest */
   return (
