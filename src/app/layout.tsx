@@ -4,6 +4,7 @@ import "./globals.css"
 import { UserWidget } from "@/components/UserWidget"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { signIn } from "next-auth/react"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,6 +29,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const session = await getServerSession(authOptions)
+  if (session?.error === "RefreshTokenError") signIn()
 
   return (
     <html lang="ja">
