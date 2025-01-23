@@ -30,13 +30,20 @@ import ImportFileButton from "@/components/ImportFileButton"
 // 	{ id: 6, name: "しゅんたろう", mail: "hiromichiosato@gmail.com" },
 // ]
 
-export default function SchedulePlanner(props: { isSignedIn: boolean; users: User[] }) {
-  const { isSignedIn, users } = props
+export default function SchedulePlanner(props: {
+  currentUserId: string | null
+  users: User[]
+  allCourses?: Course[]
+  courses?: Course[]
+}) {
+  const { currentUserId, users } = props
+  const isSignedIn = currentUserId != null
   const [title, setTitle] = useState("")
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [selectedDurationMinute, setSelectedDurationMinute] = useState<number>(60)
   const [excludePeriod, setExcludePeriod] = useState<ExcludePeriod>({ start: 22, end: 8 })
-  const [courses, setCourses] = useState<Course[]>([])
+  const [courses, setCourses] = useState<Course[]>(props.courses ?? [])
+  const [allCourses, setAllCourses] = useState<Course[]>(props.allCourses ?? [])
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -62,7 +69,12 @@ export default function SchedulePlanner(props: { isSignedIn: boolean; users: Use
             <Exclusion dispatch={setExcludePeriod} defaultValue={excludePeriod} />
             {isSignedIn ? (
               <div className="pl-8">
-                <ImportFileButton setCourses={setCourses} />
+                <ImportFileButton
+                  setCourses={setCourses}
+                  allCourses={allCourses}
+                  setAllCourses={setAllCourses}
+                  currentUserId={currentUserId}
+                />
               </div>
             ) : (
               ""
@@ -104,6 +116,7 @@ export default function SchedulePlanner(props: { isSignedIn: boolean; users: Use
         title={title}
         users={users}
         courses={courses}
+        allCourses={allCourses}
       />
       <ToastContainer />
     </div>

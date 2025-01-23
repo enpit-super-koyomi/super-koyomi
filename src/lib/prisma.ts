@@ -1,4 +1,9 @@
-import { Account, PrismaClient, User } from "@prisma/client"
+import {
+  // $Enums,
+  Account,
+  PrismaClient,
+  User,
+} from "@prisma/client"
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 export const prisma = globalForPrisma.prisma || new PrismaClient()

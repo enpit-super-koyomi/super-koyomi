@@ -19,6 +19,8 @@ model User {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    courses Course[]
 }
 
 model Account {
@@ -56,7 +58,7 @@ model VerificationToken {
     identifier String
     token      String
     expires    DateTime
-    
+
     @@id([identifier, token])
 }
 
@@ -73,4 +75,12 @@ model Authenticator {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([userId, credentialID])
+}
+
+model Course {
+    userId String
+    code   String
+    user   User   @relation(fields: [userId], references: [id])
+
+    @@id([userId, code])
 }
