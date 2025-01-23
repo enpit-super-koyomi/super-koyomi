@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { addEvent } from "@/lib/addEvent"
 import { ExcludePeriod, Period, findFreePeriods, periodsOfUsers } from "@/lib/scheduling"
-import { formatDate, formatDuration } from "@/lib/utils"
+import { formatPeriod } from "@/lib/utils"
 import { User } from "@prisma/client"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
@@ -93,16 +93,11 @@ export default function Candidate(props: Props) {
         attendees: props.users.filter(user => props.selectedUserIds.includes(user.id)),
       })
 
-      toast(
-        `カレンダーに追加されました。\n${formatDate(period_spanned.start)} から${formatDuration(
-          props.selectedDurationMinute,
-        )}`,
-        {
-          onClick: () => {
-            open("https://calendar.google.com/calendar", "_blank")
-          },
+      toast(`${formatPeriod(period_spanned)} に追加されました`, {
+        onClick: () => {
+          open("https://calendar.google.com/calendar", "_blank")
         },
-      )
+      })
     } catch (e) {
       toast("Sorry, calendar event addition error!", { type: "error", autoClose: false })
       console.error(e)
@@ -128,11 +123,20 @@ export default function Candidate(props: Props) {
     addConfirmedPeriodToCalendar(spannedPeriod)
   }
 
+  const periodMessage = spannedPeriod ? `の ${formatPeriod(spannedPeriod)} ` : ""
+
+  const dialogMessage =
+    props.selectedUserIds.length > 0
+      ? `自分のカレンダー${periodMessage}に追加して招待を送りますか？`
+      : `自分のカレンダー${periodMessage}に追加しますか？`
+
   return (
     <div className="py-4">
       <YesNoDialog
-        message="Are you sure you want to add this event to your calendar?"
+        message={dialogMessage}
         ref={yesNoDialogRef}
+        yesButton="はい"
+        noButton="やめる"
         onYes={() => handleDialogConfirm()}
         onNo={() => {}}
       />
