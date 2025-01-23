@@ -51,7 +51,7 @@ export default function ImportFileButton(prop: Prop) {
     if (prop.currentUserId) {
       resetAndUpdateUserCourses(prop.currentUserId, yourCourses)
     }
-  }, [prop.allCourses, contents, setCourses, file?.name])
+  }, [prop.allCourses, prop.currentUserId, contents, setCourses, file?.name])
 
   useEffect(() => {
     searchCourses()
