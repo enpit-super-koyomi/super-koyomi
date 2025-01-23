@@ -5,7 +5,7 @@ import { addEvent } from "@/lib/addEvent"
 import { ExcludePeriod, Period, findFreePeriods, periodsOfUsers } from "@/lib/scheduling"
 import { formatDate, formatDuration } from "@/lib/utils"
 import { User } from "@prisma/client"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { WeekView } from "./WeekView"
 import { Course } from "@/third-party/twinte-parser-type"
@@ -13,6 +13,7 @@ import { YesNoDialog } from "@/components/ui/dialog"
 import { coursePeriodsThroughWeeks } from "@/lib/course"
 import { CoursePeriod } from "@/lib/course"
 import { getUserCourseCodes } from "@/lib/server"
+import { DEFAULT_TITLE } from "@/lib/const"
 
 type Props = {
   title: string
@@ -26,16 +27,17 @@ type Props = {
 }
 
 export default function Candidate(props: Props) {
-  const [isButtonActive, setIsButtonActive] = useState(false)
+  const [isButtonActive, setIsButtonActive] = useState(true)
+  const title = props.title.trim() == "" ? DEFAULT_TITLE : props.title.trim()
   const [freePeriods, setFreePeriods] = useState<Period[]>([])
   // const [selectedPeriod, setSelectedPeriod] = useState<Period | null>(null)
   const [spannedPeriod, setSpannedPeriod] = useState<Period | null>(null)
 
   const yesNoDialogRef = useRef<HTMLDialogElement>(null)
 
-  useEffect(() => {
-    setIsButtonActive(props.title.trim() !== "")
-  }, [props.title])
+  // useEffect(() => {
+  //   setIsButtonActive(props.title.trim() !== "")
+  // }, [props.title])
 
   // 自分の授業とその時間の配列
   const coursePeriods: CoursePeriod[] = coursePeriodsThroughWeeks(props.courses, new Date())
@@ -84,7 +86,7 @@ export default function Candidate(props: Props) {
     try {
       await addEvent({
         id: null,
-        summary: props.title,
+        summary: title,
         start: period_spanned?.start,
         end: period_spanned?.end,
         description: null,
@@ -137,7 +139,7 @@ export default function Candidate(props: Props) {
         onNo={() => {}}
       />
       <Button onClick={handleSchedule} disabled={!isButtonActive} className="w-full">
-        「{props.title || "-"}」の日時候補を探す
+        「{title}」の日時候補を探す
       </Button>
       {freePeriods.length > 0 ? (
         <WeekView
