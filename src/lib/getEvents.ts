@@ -3,6 +3,7 @@ import { db } from "@/lib/prisma"
 import { GoogleCalendar } from "./googleCalendar"
 import { getServerSession } from "next-auth"
 import { authOptions } from "./auth"
+import { getOrRefreshAccessToken } from "@/lib/googleApi"
 
 export async function getHostEvents() {
   const session = await getServerSession(authOptions)
@@ -18,7 +19,11 @@ export async function getGuestsEvents(ids: string[]) {
   const promises = ids.map(async id => {
     const account = await db.findAccount(id)
     if (!account?.access_token) return []
-    const calendar = new GoogleCalendar(account.access_token)
+
+    const accessToken = await getOrRefreshAccessToken(account.userId)
+    if (!accessToken) return []
+
+    const calendar = new GoogleCalendar(accessToken)
     return await calendar.getBusyPeriods()
   })
   return Promise.all(promises)
