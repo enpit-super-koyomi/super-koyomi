@@ -20,6 +20,7 @@ import { formatDuration } from "@/lib/utils"
 import Candidate from "./candidate"
 import { Course } from "@/third-party/twinte-parser-type"
 import ImportFileButton from "@/components/ImportFileButton"
+import { DEFAULT_TITLE } from "@/lib/const"
 
 // const people = [
 // 	{ id: 1, name: "HosokawaR", mail: "superkoyomi1@gmail.com" },
@@ -56,7 +57,7 @@ export default function SchedulePlanner(props: {
             id="title"
             value={title}
             onChange={e => setTitle(e.target.value)}
-            placeholder="予定のタイトルを入力"
+            placeholder={DEFAULT_TITLE}
           />
         </div>
         <div>
