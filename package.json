@@ -32,7 +32,8 @@
     "react-toastify": "^10.0.6",
     "shadcn-ui": "^0.2.3",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "vercel": "^39.3.0"
   },
   "devDependencies": {
     "@types/node": "^20",
