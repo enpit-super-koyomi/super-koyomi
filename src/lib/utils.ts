@@ -90,5 +90,32 @@ export const formatDate = (date: Date): string => {
   return formattedDate
 }
 
+export const formatPeriod = ({ start, end }: Period): string => {
+  const sames: string[] = []
+  if (start.getFullYear() == end.getFullYear()) sames.push("year")
+  if (start.getMonth() == end.getMonth()) sames.push("month")
+  if (start.getDate() == end.getDate()) sames.push("day")
+  if (start.getHours() == end.getHours()) sames.push("hour")
+
+  const startFormatted = formatDate(start)
+  const options = {
+    year: "numeric",
+    month: "long", // 'short' for abbreviated month names
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    // second: '2-digit',
+    // timeZoneName: 'short' // Shows the time zone
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const endFormatted = end.toLocaleString(
+    "ja-JP",
+    Object.fromEntries(Object.entries(options).filter(([prop, _]) => !sames.includes(prop))),
+  )
+
+  return `${startFormatted} - ${endFormatted}`
+}
+
 // export const max = (a: number, b: number | undefined | null) => (b ? (a < b ? b : a) : a)
 // export const min = (a: number, b: number | undefined | null) => (b ? (a > b ? b : a) : a)
